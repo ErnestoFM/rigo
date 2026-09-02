@@ -1,0 +1,251 @@
+================================================================================
+   ACTIVIDAD 1: DEFINICIÓN DE TOKENS Y EXPRESIONES REGULARES (ANALIZADOR LÉXICO C)
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
+
+--------------------------------------------------------------------------------
+ >>> CASO DE PRUEBA VÁLIDO 1: FACTORIAL, STRUCTS Y BUCLES EN C <<<
+--------------------------------------------------------------------------------
++------+--------+-------+--------------------------+---------------------------+
+| #    | LÍNEA  | COL   | CATEGORÍA LÉXICA         | LEXEMA / VALOR            |
++------+--------+-------+--------------------------+---------------------------+
+| 1    | 1      | 1     | Comentario de Bloque     | /*\n * Programa de pr...  |
+| 2    | 5      | 1     | !!! ERROR LÉXICO !!!     | #                         |
+| 3    | 5      | 2     | Identificador            | include                   |
+| 4    | 5      | 10    | Operador Relacional      | <                         |
+| 5    | 5      | 11    | Identificador            | stdio                     |
+| 6    | 5      | 16    | Delimitador / Símbolo    | .                         |
+| 7    | 5      | 17    | Identificador            | h                         |
+| 8    | 5      | 18    | Operador Relacional      | >                         |
+| 9    | 7      | 1     | Palabra Clave            | struct                    |
+| 10   | 7      | 8     | Identificador            | Persona                   |
+| 11   | 7      | 16    | Delimitador / Símbolo    | {                         |
+| 12   | 8      | 5     | Palabra Clave            | char                      |
+| 13   | 8      | 10    | Identificador            | nombre                    |
+| 14   | 8      | 16    | Delimitador / Símbolo    | [                         |
+| 15   | 8      | 17    | Literal Entero           | 50                        |
+| 16   | 8      | 19    | Delimitador / Símbolo    | ]                         |
+| 17   | 8      | 20    | Delimitador / Símbolo    | ;                         |
+| 18   | 9      | 5     | Palabra Clave            | int                       |
+| 19   | 9      | 9     | Identificador            | edad                      |
+| 20   | 9      | 13    | Delimitador / Símbolo    | ;                         |
+| 21   | 10     | 5     | Palabra Clave            | float                     |
+| 22   | 10     | 11    | Identificador            | salario                   |
+| 23   | 10     | 18    | Delimitador / Símbolo    | ;                         |
+| 24   | 11     | 1     | Delimitador / Símbolo    | }                         |
+| 25   | 11     | 2     | Delimitador / Símbolo    | ;                         |
+| 26   | 13     | 1     | Comentario de Línea      | // Función principal      |
+| 27   | 14     | 1     | Palabra Clave            | int                       |
+| 28   | 14     | 5     | Identificador            | main                      |
+| 29   | 14     | 9     | Delimitador / Símbolo    | (                         |
+| 30   | 14     | 10    | Delimitador / Símbolo    | )                         |
+| 31   | 14     | 12    | Delimitador / Símbolo    | {                         |
+| 32   | 15     | 5     | Palabra Clave            | int                       |
+| 33   | 15     | 9     | Identificador            | n                         |
+| 34   | 15     | 11    | Operador Asignación      | =                         |
+| 35   | 15     | 13    | Literal Entero           | 5                         |
+| 36   | 15     | 14    | Delimitador / Símbolo    | ;                         |
+| 37   | 16     | 5     | Palabra Clave            | long                      |
+| 38   | 16     | 10    | Palabra Clave            | long                      |
+| 39   | 16     | 15    | Identificador            | factorial                 |
+| 40   | 16     | 25    | Operador Asignación      | =                         |
+| 41   | 16     | 27    | Literal Entero           | 1                         |
+| 42   | 16     | 28    | Delimitador / Símbolo    | ;                         |
+| 43   | 17     | 5     | Palabra Clave            | float                     |
+| 44   | 17     | 11    | Identificador            | pi                        |
+| 45   | 17     | 14    | Operador Asignación      | =                         |
+| 46   | 17     | 16    | Literal Flotante         | 3.14159f                  |
+| 47   | 17     | 24    | Delimitador / Símbolo    | ;                         |
+| 48   | 18     | 5     | Palabra Clave            | char                      |
+| 49   | 18     | 10    | Identificador            | delimitador               |
+| 50   | 18     | 22    | Operador Asignación      | =                         |
+| 51   | 18     | 24    | Literal Carácter         | '\n'                      |
+| 52   | 18     | 28    | Delimitador / Símbolo    | ;                         |
+| 53   | 20     | 5     | Comentario de Bloque     | /* Bucle para calcula...  |
+| 54   | 21     | 5     | Palabra Clave            | for                       |
+| 55   | 21     | 9     | Delimitador / Símbolo    | (                         |
+| 56   | 21     | 10    | Palabra Clave            | int                       |
+| 57   | 21     | 14    | Identificador            | i                         |
+| 58   | 21     | 16    | Operador Asignación      | =                         |
+| 59   | 21     | 18    | Literal Entero           | 1                         |
+| 60   | 21     | 19    | Delimitador / Símbolo    | ;                         |
+| 61   | 21     | 21    | Identificador            | i                         |
+| 62   | 21     | 23    | Operador Relacional      | <=                        |
+| 63   | 21     | 26    | Identificador            | n                         |
+| 64   | 21     | 27    | Delimitador / Símbolo    | ;                         |
+| 65   | 21     | 29    | Operador Aritmético      | ++                        |
+| 66   | 21     | 31    | Identificador            | i                         |
+| 67   | 21     | 32    | Delimitador / Símbolo    | )                         |
+| 68   | 21     | 34    | Delimitador / Símbolo    | {                         |
+| 69   | 22     | 9     | Identificador            | factorial                 |
+| 70   | 22     | 19    | Operador Asignación      | *=                        |
+| 71   | 22     | 22    | Identificador            | i                         |
+| 72   | 22     | 23    | Delimitador / Símbolo    | ;                         |
+| 73   | 23     | 5     | Delimitador / Símbolo    | }                         |
+| 74   | 25     | 5     | Palabra Clave            | if                        |
+| 75   | 25     | 8     | Delimitador / Símbolo    | (                         |
+| 76   | 25     | 9     | Identificador            | factorial                 |
+| 77   | 25     | 19    | Operador Relacional      | >                         |
+| 78   | 25     | 21    | Literal Entero           | 100                       |
+| 79   | 25     | 25    | Operador Lógico          | &&                        |
+| 80   | 25     | 28    | Identificador            | pi                        |
+| 81   | 25     | 31    | Operador Relacional      | !=                        |
+| 82   | 25     | 34    | Literal Flotante         | 0.0                       |
+| 83   | 25     | 37    | Delimitador / Símbolo    | )                         |
+| 84   | 25     | 39    | Delimitador / Símbolo    | {                         |
+| 85   | 26     | 9     | Identificador            | printf                    |
+| 86   | 26     | 15    | Delimitador / Símbolo    | (                         |
+| 87   | 26     | 16    | Literal Cadena           | "Factorial de %d = %l...  |
+| 88   | 26     | 42    | Delimitador / Símbolo    | ,                         |
+| 89   | 26     | 44    | Identificador            | n                         |
+| 90   | 26     | 45    | Delimitador / Símbolo    | ,                         |
+| 91   | 26     | 47    | Identificador            | factorial                 |
+| 92   | 26     | 56    | Delimitador / Símbolo    | )                         |
+| 93   | 26     | 57    | Delimitador / Símbolo    | ;                         |
+| 94   | 27     | 5     | Delimitador / Símbolo    | }                         |
+| 95   | 27     | 7     | Palabra Clave            | else                      |
+| 96   | 27     | 12    | Delimitador / Símbolo    | {                         |
+| 97   | 28     | 9     | Identificador            | printf                    |
+| 98   | 28     | 15    | Delimitador / Símbolo    | (                         |
+| 99   | 28     | 16    | Literal Cadena           | "Error en el cálculo\n"   |
+| 100  | 28     | 39    | Delimitador / Símbolo    | )                         |
+| 101  | 28     | 40    | Delimitador / Símbolo    | ;                         |
+| 102  | 29     | 5     | Delimitador / Símbolo    | }                         |
+| 103  | 31     | 5     | Palabra Clave            | return                    |
+| 104  | 31     | 12    | Literal Entero           | 0                         |
+| 105  | 31     | 13    | Delimitador / Símbolo    | ;                         |
+| 106  | 32     | 1     | Delimitador / Símbolo    | }                         |
++------+--------+-------+--------------------------+---------------------------+
+ RESUMEN: 105 Tokens Válidos Identificados | 1 Errores Léxicos Detectados
+
+
+--------------------------------------------------------------------------------
+ >>> CASO DE PRUEBA VÁLIDO 2: BITS, NOTACIÓN CIENTÍFICA Y SWITCH EN C <<<
+--------------------------------------------------------------------------------
++------+--------+-------+--------------------------+---------------------------+
+| #    | LÍNEA  | COL   | CATEGORÍA LÉXICA         | LEXEMA / VALOR            |
++------+--------+-------+--------------------------+---------------------------+
+| 1    | 1      | 1     | Comentario de Línea      | // Programa de prueba...  |
+| 2    | 3      | 1     | Palabra Clave            | int                       |
+| 3    | 3      | 5     | Identificador            | procesar_datos            |
+| 4    | 3      | 19    | Delimitador / Símbolo    | (                         |
+| 5    | 3      | 20    | Palabra Clave            | unsigned                  |
+| 6    | 3      | 29    | Palabra Clave            | int                       |
+| 7    | 3      | 33    | Identificador            | mascara                   |
+| 8    | 3      | 40    | Delimitador / Símbolo    | )                         |
+| 9    | 3      | 42    | Delimitador / Símbolo    | {                         |
+| 10   | 4      | 5     | Palabra Clave            | float                     |
+| 11   | 4      | 11    | Identificador            | valor_sensor              |
+| 12   | 4      | 24    | Operador Asignación      | =                         |
+| 13   | 4      | 26    | Literal Flotante         | 1.25e-3                   |
+| 14   | 4      | 33    | Delimitador / Símbolo    | ;                         |
+| 15   | 5      | 5     | Palabra Clave            | double                    |
+| 16   | 5      | 12    | Identificador            | limite                    |
+| 17   | 5      | 19    | Operador Asignación      | =                         |
+| 18   | 5      | 21    | Literal Flotante         | 9.99                      |
+| 19   | 5      | 25    | Delimitador / Símbolo    | ;                         |
+| 20   | 7      | 5     | Identificador            | mascara                   |
+| 21   | 7      | 13    | Operador Asignación      | =                         |
+| 22   | 7      | 15    | Identificador            | mascara                   |
+| 23   | 7      | 23    | Operador de Bits         | &                         |
+| 24   | 7      | 25    | Literal Entero           | 0xFF00                    |
+| 25   | 7      | 31    | Delimitador / Símbolo    | ;                         |
+| 26   | 8      | 5     | Identificador            | mascara                   |
+| 27   | 8      | 13    | Operador Asignación      | =                         |
+| 28   | 8      | 15    | Identificador            | mascara                   |
+| 29   | 8      | 23    | Operador Relacional      | >                         |
+| 30   | 8      | 24    | Operador Relacional      | >                         |
+| 31   | 8      | 26    | Literal Entero           | 4                         |
+| 32   | 8      | 27    | Delimitador / Símbolo    | ;                         |
+| 33   | 10     | 5     | Palabra Clave            | switch                    |
+| 34   | 10     | 12    | Delimitador / Símbolo    | (                         |
+| 35   | 10     | 13    | Identificador            | mascara                   |
+| 36   | 10     | 20    | Delimitador / Símbolo    | )                         |
+| 37   | 10     | 22    | Delimitador / Símbolo    | {                         |
+| 38   | 11     | 9     | Palabra Clave            | case                      |
+| 39   | 11     | 14    | Literal Entero           | 0x10                      |
+| 40   | 11     | 18    | Delimitador / Símbolo    | :                         |
+| 41   | 12     | 13    | Identificador            | valor_sensor              |
+| 42   | 12     | 26    | Operador Asignación      | +=                        |
+| 43   | 12     | 29    | Literal Flotante         | 0.5f                      |
+| 44   | 12     | 33    | Delimitador / Símbolo    | ;                         |
+| 45   | 13     | 13    | Palabra Clave            | break                     |
+| 46   | 13     | 18    | Delimitador / Símbolo    | ;                         |
+| 47   | 14     | 9     | Palabra Clave            | default                   |
+| 48   | 14     | 16    | Delimitador / Símbolo    | :                         |
+| 49   | 15     | 13    | Identificador            | valor_sensor              |
+| 50   | 15     | 26    | Operador Asignación      | -=                        |
+| 51   | 15     | 29    | Literal Flotante         | 0.1f                      |
+| 52   | 15     | 33    | Delimitador / Símbolo    | ;                         |
+| 53   | 16     | 5     | Delimitador / Símbolo    | }                         |
+| 54   | 18     | 5     | Palabra Clave            | return                    |
+| 55   | 18     | 12    | Delimitador / Símbolo    | (                         |
+| 56   | 18     | 13    | Identificador            | valor_sensor              |
+| 57   | 18     | 26    | Operador Relacional      | <=                        |
+| 58   | 18     | 29    | Identificador            | limite                    |
+| 59   | 18     | 35    | Delimitador / Símbolo    | )                         |
+| 60   | 18     | 37    | Delimitador / Símbolo    | ?                         |
+| 61   | 18     | 39    | Literal Entero           | 1                         |
+| 62   | 18     | 41    | Delimitador / Símbolo    | :                         |
+| 63   | 18     | 43    | Literal Entero           | 0                         |
+| 64   | 18     | 44    | Delimitador / Símbolo    | ;                         |
+| 65   | 19     | 1     | Delimitador / Símbolo    | }                         |
++------+--------+-------+--------------------------+---------------------------+
+ RESUMEN: 65 Tokens Válidos Identificados | 0 Errores Léxicos Detectados
+
+
+--------------------------------------------------------------------------------
+ >>> CASO DE PRUEBA 3: DEMOSTRACIÓN DE DETECCIÓN DE ERRORES LÉXICOS <<<
+--------------------------------------------------------------------------------
++------+--------+-------+--------------------------+---------------------------+
+| #    | LÍNEA  | COL   | CATEGORÍA LÉXICA         | LEXEMA / VALOR            |
++------+--------+-------+--------------------------+---------------------------+
+| 1    | 1      | 1     | Comentario de Línea      | // Programa con error...  |
+| 2    | 3      | 1     | Palabra Clave            | int                       |
+| 3    | 3      | 5     | Identificador            | main                      |
+| 4    | 3      | 9     | Delimitador / Símbolo    | (                         |
+| 5    | 3      | 10    | Delimitador / Símbolo    | )                         |
+| 6    | 3      | 12    | Delimitador / Símbolo    | {                         |
+| 7    | 4      | 5     | Palabra Clave            | int                       |
+| 8    | 4      | 9     | !!! ERROR LÉXICO !!!     | $                         |
+| 9    | 4      | 10    | Identificador            | variable_invalida         |
+| 10   | 4      | 28    | Operador Asignación      | =                         |
+| 11   | 4      | 30    | Literal Entero           | 10                        |
+| 12   | 4      | 32    | Delimitador / Símbolo    | ;                         |
+| 13   | 5      | 5     | Palabra Clave            | char                      |
+| 14   | 5      | 9     | !!! ERROR LÉXICO !!!     | @                         |
+| 15   | 5      | 11    | Identificador            | caracter_extrano          |
+| 16   | 5      | 28    | Operador Asignación      | =                         |
+| 17   | 5      | 30    | Literal Carácter         | 'a'                       |
+| 18   | 5      | 33    | Delimitador / Símbolo    | ;                         |
+| 19   | 7      | 5     | Comentario de Línea      | // Cadena sin cerrar ...  |
+| 20   | 8      | 5     | Palabra Clave            | char                      |
+| 21   | 8      | 9     | Operador Aritmético      | *                         |
+| 22   | 8      | 11    | Identificador            | texto                     |
+| 23   | 8      | 17    | Operador Asignación      | =                         |
+| 24   | 8      | 19    | !!! ERROR LÉXICO !!!     | "Esta cadena no se ha...  |
+| 25   | 10     | 5     | Palabra Clave            | float                     |
+| 26   | 10     | 11    | !!! ERROR LÉXICO !!!     | #                         |
+| 27   | 10     | 12    | Identificador            | numero                    |
+| 28   | 10     | 19    | Operador Asignación      | =                         |
+| 29   | 10     | 21    | Literal Flotante         | 45.67                     |
+| 30   | 10     | 26    | Delimitador / Símbolo    | ;                         |
+| 31   | 11     | 5     | Palabra Clave            | return                    |
+| 32   | 11     | 12    | Literal Entero           | 0                         |
+| 33   | 11     | 13    | Delimitador / Símbolo    | ;                         |
+| 34   | 12     | 1     | Delimitador / Símbolo    | }                         |
++------+--------+-------+--------------------------+---------------------------+
+ RESUMEN: 30 Tokens Válidos Identificados | 4 Errores Léxicos Detectados
+
+================================================================================
+   EJECUCIÓN FINALIZADA EXITOSAMENTE
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
