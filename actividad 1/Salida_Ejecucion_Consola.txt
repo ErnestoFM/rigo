@@ -1,0 +1,284 @@
+===============================================================================================
+   ACTIVIDAD 3: ANÁLISIS SINTÁCTICO DE VARIABLES Y CONSTANTES
+   MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+   PROFESOR: RIGOBERTO CARDENAS LARIOS
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 1: DECLARACIONES SIMPLES DE VARIABLES <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 1: Declaraciones simples de variables
+    2 | entero x;
+    3 | flotante y;
+    4 | booleano activo;
+    5 | cadena nombre;
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ProgramNode
+      ├── VarDeclarationNode: tipo='entero', id='x' (L:2, C:8)
+      ├── VarDeclarationNode: tipo='flotante', id='y' (L:3, C:10)
+      ├── VarDeclarationNode: tipo='booleano', id='activo' (L:4, C:10)
+      └── VarDeclarationNode: tipo='cadena', id='nombre' (L:5, C:8)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 2: DECLARACIONES DE VARIABLES CON INICIALIZACIÓN <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 2: Declaraciones con inicialización
+    2 | entero edad = 21;
+    3 | flotante pi = 3.1416;
+    4 | booleano bandera = verdadero;
+    5 | cadena saludo = "Hola Compiladores";
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ProgramNode
+      ├── VarDeclarationNode: tipo='entero', id='edad' (L:2, C:8)
+      │   └── LiteralNode: valor='21', tipo=entero (L:2, C:15)
+      ├── VarDeclarationNode: tipo='flotante', id='pi' (L:3, C:10)
+      │   └── LiteralNode: valor='3.1416', tipo=flotante (L:3, C:15)
+      ├── VarDeclarationNode: tipo='booleano', id='bandera' (L:4, C:10)
+      │   └── LiteralNode: valor='verdadero', tipo=booleano (L:4, C:20)
+      └── VarDeclarationNode: tipo='cadena', id='saludo' (L:5, C:8)
+          └── LiteralNode: valor='Hola Compiladores', tipo=cadena (L:5, C:17)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 3: DECLARACIONES DE CONSTANTES (OBLIGATORIAMENTE INICIALIZADAS) <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 3: Declaraciones de constantes
+    2 | constante entero LIMITE = 100;
+    3 | const flotante GRAVEDAD = 9.80665;
+    4 | constante cadena TITULO = "Analizador Sintactico";
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ProgramNode
+      ├── ConstDeclarationNode: tipo='entero', id='LIMITE' [CONSTANTE] (L:2, C:18)
+      │   └── LiteralNode: valor='100', tipo=entero (L:2, C:27)
+      ├── ConstDeclarationNode: tipo='flotante', id='GRAVEDAD' [CONSTANTE] (L:3, C:16)
+      │   └── LiteralNode: valor='9.80665', tipo=flotante (L:3, C:27)
+      └── ConstDeclarationNode: tipo='cadena', id='TITULO' [CONSTANTE] (L:4, C:18)
+          └── LiteralNode: valor='Analizador Sintactico', tipo=cadena (L:4, C:27)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 4: USO DE VARIABLES Y CONSTANTES EN EXPRESIONES <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 4: Uso y sentencias de asignación
+    2 | entero x = 10;
+    3 | entero y = 20;
+    4 | entero resultado;
+    5 | resultado = (x + y) * 2;
+    6 | activo = (x < y) && verdadero;
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ProgramNode
+      ├── VarDeclarationNode: tipo='entero', id='x' (L:2, C:8)
+      │   └── LiteralNode: valor='10', tipo=entero (L:2, C:12)
+      ├── VarDeclarationNode: tipo='entero', id='y' (L:3, C:8)
+      │   └── LiteralNode: valor='20', tipo=entero (L:3, C:12)
+      ├── VarDeclarationNode: tipo='entero', id='resultado' (L:4, C:8)
+      ├── AssignmentNode: target='resultado' (L:5, C:1)
+      │   └── BinaryOpNode: op='*'
+      │       ├── BinaryOpNode: op='+'
+      │       │   ├── IdentifierNode: 'x' (L:5, C:14)
+      │       │   └── IdentifierNode: 'y' (L:5, C:18)
+      │       └── LiteralNode: valor='2', tipo=entero (L:5, C:23)
+      └── AssignmentNode: target='activo' (L:6, C:1)
+          └── BinaryOpNode: op='&&'
+              ├── BinaryOpNode: op='<'
+              │   ├── IdentifierNode: 'x' (L:6, C:11)
+              │   └── IdentifierNode: 'y' (L:6, C:15)
+              └── LiteralNode: valor='verdadero', tipo=booleano (L:6, C:21)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 5: ERROR - IDENTIFICADORES INVÁLIDOS QUE INICIAN CON DÍGITO <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 5: Identificadores inválidos (inician con números)
+    2 | entero 123x;
+    3 | cadena 123;
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (2 Errores)
+
+===============================================================================================
+  [ERROR] REPORTE DE ERRORES SINTÁCTICOS DETECTADOS (2 ERRORES):
+===============================================================================================
++-----+-------+------+--------------+--------------------------------------------------------------+
+| #   | LÍNEA | COL  | TOKEN        | DESCRIPCIÓN DEL ERROR / SUGERENCIA                           |
++-----+-------+------+--------------+--------------------------------------------------------------+
+| 1   | 2     | 8    | 123x         | Error: Identificador inválido '123x' en la línea 2, column   |
+|     |       |      |              | a 8. Un identificador debe comenzar con una letra o guion bajo. |
+| 2   | 3     | 8    | 123          | Error: Identificador inválido '123' en la línea 3, columna   |
+|     |       |      |              |  8. Un identificador debe comenzar con una letra o guion bajo. |
++-----+-------+------+--------------+--------------------------------------------------------------+
+===============================================================================================
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 6: ERROR - TIPOS DE DATOS NO VÁLIDOS <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 6: Tipos no válidos
+    2 | flotando y;
+    3 | doble saldo;
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (2 Errores)
+
+===============================================================================================
+  [ERROR] REPORTE DE ERRORES SINTÁCTICOS DETECTADOS (2 ERRORES):
+===============================================================================================
++-----+-------+------+--------------+--------------------------------------------------------------+
+| #   | LÍNEA | COL  | TOKEN        | DESCRIPCIÓN DEL ERROR / SUGERENCIA                           |
++-----+-------+------+--------------+--------------------------------------------------------------+
+| 1   | 2     | 1    | flotando     | Error: Tipo no válido 'flotando' en la línea 2, columna 1.   |
+|     |       |      |              |  Los tipos válidos son 'entero', 'flotante', 'booleano', y 'cadena'. |
+| 2   | 3     | 1    | doble        | Error: Tipo no válido 'doble' en la línea 3, columna 1. Lo   |
+|     |       |      |              | s tipos válidos son 'entero', 'flotante', 'booleano', y 'cadena'. |
++-----+-------+------+--------------+--------------------------------------------------------------+
+===============================================================================================
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 7: ERROR - FALTA DE PUNTO Y COMA (;) AL FINAL <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 7: Falta de punto y coma al final
+    2 | booleano activo
+    3 | entero contador = 50
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (2 Errores)
+
+===============================================================================================
+  [ERROR] REPORTE DE ERRORES SINTÁCTICOS DETECTADOS (2 ERRORES):
+===============================================================================================
++-----+-------+------+--------------+--------------------------------------------------------------+
+| #   | LÍNEA | COL  | TOKEN        | DESCRIPCIÓN DEL ERROR / SUGERENCIA                           |
++-----+-------+------+--------------+--------------------------------------------------------------+
+| 1   | 2     | 16   | ;            | Error: Se esperaba ';' al final de la declaración en la lí   |
+|     |       |      |              | nea 2, columna 16. Asegúrese de terminar la instrucción con un punto y coma (;). |
+| 2   | 3     | 21   | ;            | Error: Se esperaba ';' al final de la declaración en la lí   |
+|     |       |      |              | nea 3, columna 21. Asegúrese de terminar la instrucción con un punto y coma (;). |
++-----+-------+------+--------------+--------------------------------------------------------------+
+===============================================================================================
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 8: ERROR - CONSTANTE NO INICIALIZADA <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 8: Constante sin valor inicial
+    2 | constante entero MAX;
+    3 | const flotante PI_SIN_VALOR;
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (2 Errores)
+
+===============================================================================================
+  [ERROR] REPORTE DE ERRORES SINTÁCTICOS DETECTADOS (2 ERRORES):
+===============================================================================================
++-----+-------+------+--------------+--------------------------------------------------------------+
+| #   | LÍNEA | COL  | TOKEN        | DESCRIPCIÓN DEL ERROR / SUGERENCIA                           |
++-----+-------+------+--------------+--------------------------------------------------------------+
+| 1   | 2     | 18   | MAX          | Error: La constante 'MAX' debe ser inicializada con un val   |
+|     |       |      |              | or en la línea 2, columna 18. Las constantes no pueden declararse sin un valor inicial (ej. constante entero MAX = 100;). |
+| 2   | 3     | 16   | PI_SIN_V..   | Error: La constante 'PI_SIN_VALOR' debe ser inicializada c   |
+|     |       |      |              | on un valor en la línea 3, columna 16. Las constantes no pueden declararse sin un valor inicial (ej. constante entero MAX = 100;). |
++-----+-------+------+--------------+--------------------------------------------------------------+
+===============================================================================================
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 9: ERROR - EXPRESIÓN ROTA O ASIGNACIÓN INCOMPLETA <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 9: Expresiones rotas o asignación incompleta
+    2 | entero a = ;
+    3 | x = y + ;
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (4 Errores)
+
+===============================================================================================
+  [ERROR] REPORTE DE ERRORES SINTÁCTICOS DETECTADOS (4 ERRORES):
+===============================================================================================
++-----+-------+------+--------------+--------------------------------------------------------------+
+| #   | LÍNEA | COL  | TOKEN        | DESCRIPCIÓN DEL ERROR / SUGERENCIA                           |
++-----+-------+------+--------------+--------------------------------------------------------------+
+| 1   | 2     | 12   | ;            | Error: Expresión incompleta o token inesperado ';' en la l   |
+|     |       |      |              | ínea 2, columna 12. Verifique la sintaxis del operando o valor asignado. |
+| 2   | 2     | 13   | ;            | Error: Se esperaba ';' al final de la declaración en la lí   |
+|     |       |      |              | nea 2, columna 13. Asegúrese de terminar la instrucción con un punto y coma (;). |
+| 3   | 3     | 9    | ;            | Error: Expresión incompleta o token inesperado ';' en la l   |
+|     |       |      |              | ínea 3, columna 9. Verifique la sintaxis del operando o valor asignado. |
+| 4   | 3     | 10   | ;            | Error: Se esperaba ';' al final de la declaración en la lí   |
+|     |       |      |              | nea 3, columna 10. Asegúrese de terminar la instrucción con un punto y coma (;). |
++-----+-------+------+--------------+--------------------------------------------------------------+
+===============================================================================================
+===============================================================================================
+
+===============================================================================================
+ >>> CASO 10: SUITE INTEGRAL COMBINADA CON MÚLTIPLES FALLAS <<<
+===============================================================================================
+ [CÓDIGO FUENTE ANALIZADO]:
+    1 | // Caso 10: Suite combinada con múltiples errores sintácticos
+    2 | entero 123x;
+    3 | flotando temperatura;
+    4 | booleano flag
+    5 | constante entero LIMITE_SIN_VALOR;
+    6 | cadena 999;
+    7 | total = ;
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (7 Errores)
+
+===============================================================================================
+  [ERROR] REPORTE DE ERRORES SINTÁCTICOS DETECTADOS (7 ERRORES):
+===============================================================================================
++-----+-------+------+--------------+--------------------------------------------------------------+
+| #   | LÍNEA | COL  | TOKEN        | DESCRIPCIÓN DEL ERROR / SUGERENCIA                           |
++-----+-------+------+--------------+--------------------------------------------------------------+
+| 1   | 2     | 8    | 123x         | Error: Identificador inválido '123x' en la línea 2, column   |
+|     |       |      |              | a 8. Un identificador debe comenzar con una letra o guion bajo. |
+| 2   | 3     | 1    | flotando     | Error: Tipo no válido 'flotando' en la línea 3, columna 1.   |
+|     |       |      |              |  Los tipos válidos son 'entero', 'flotante', 'booleano', y 'cadena'. |
+| 3   | 4     | 14   | ;            | Error: Se esperaba ';' al final de la declaración en la lí   |
+|     |       |      |              | nea 4, columna 14. Asegúrese de terminar la instrucción con un punto y coma (;). |
+| 4   | 5     | 18   | LIMITE_S..   | Error: La constante 'LIMITE_SIN_VALOR' debe ser inicializa   |
+|     |       |      |              | da con un valor en la línea 5, columna 18. Las constantes no pueden declararse sin un valor inicial (ej. constante entero MAX = 100;). |
+| 5   | 6     | 8    | 999          | Error: Identificador inválido '999' en la línea 6, columna   |
+|     |       |      |              |  8. Un identificador debe comenzar con una letra o guion bajo. |
+| 6   | 7     | 9    | ;            | Error: Expresión incompleta o token inesperado ';' en la l   |
+|     |       |      |              | ínea 7, columna 9. Verifique la sintaxis del operando o valor asignado. |
+| 7   | 7     | 10   | ;            | Error: Se esperaba ';' al final de la declaración en la lí   |
+|     |       |      |              | nea 7, columna 10. Asegúrese de terminar la instrucción con un punto y coma (;). |
++-----+-------+------+--------------+--------------------------------------------------------------+
+===============================================================================================
+===============================================================================================
+
+===============================================================================================
+   EJECUCIÓN DEL ANALIZADOR SINTÁCTICO FINALIZADA EXITOSAMENTE
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+===============================================================================================
