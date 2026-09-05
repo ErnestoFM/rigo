@@ -1,0 +1,549 @@
+===============================================================================================
+   ACTIVIDAD 4: ANÁLISIS SINTÁCTICO DE EXPRESIONES ARITMÉTICAS Y LÓGICAS
+   MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+   PROFESOR: RIGOBERTO CARDENAS LARIOS
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+===============================================================================================
+
+###############################################################################################
+   SECCIÓN 1: PRUEBAS DE EXPRESIONES VÁLIDAS (ARITMÉTICAS Y LÓGICAS)
+###############################################################################################
+
+===============================================================================================
+ >>> CASO V1: ARITMÉTICA SIMPLE (SUMA Y MULTIPLICACIÓN) [OFICIAL] (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: 'x + y * 5'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: x (IDENTIFICADOR) | + (OP_SUMA) | y (IDENTIFICADOR) | * (OP_MULTIPLICACION) | 5 (NUMERO_ENTERO)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:3)
+      ├── Identificador: 'x' (L:1, C:1)
+      └── ExpresionAritmetica/Operacion [Op: '*'] (L:1, C:7)
+          ├── Identificador: 'y' (L:1, C:5)
+          └── Numero (entero): 5 (L:1, C:9)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V2: ARITMÉTICA CON AGRUPACIÓN Y DIVISIÓN [OFICIAL] (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '(a - b) / c'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: ( (PARENTESIS_IZQ) | a (IDENTIFICADOR) | - (OP_RESTA) | b (IDENTIFICADOR) | ) (PARENTESIS_DER) | / (OP_DIVISION) | c (IDENTIFICADOR)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ExpresionAritmetica/Operacion [Op: '/'] (L:1, C:9)
+      ├── SubexpresionAgrupada '( )' (L:1, C:1)
+      │   └── ExpresionAritmetica/Operacion [Op: '-'] (L:1, C:4)
+      │       ├── Identificador: 'a' (L:1, C:2)
+      │       └── Identificador: 'b' (L:1, C:6)
+      └── Identificador: 'c' (L:1, C:11)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V3: EXPRESIÓN LÓGICA RELACIONAL Y CONJUNCIÓN (&&) [OFICIAL] (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '10 > 5 && 3 <= 4'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: 10 (NUMERO_ENTERO) | > (OP_MAYOR) | 5 (NUMERO_ENTERO) | && (OP_AND) | 3 (NUMERO_ENTERO) | <= (OP_MENOR_IGUAL) | 4 (NUMERO_ENTERO)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ExpresionLogica [Op: '&&'] (L:1, C:8)
+      ├── TerminoLogico/Comparacion [Op: '>'] (L:1, C:4)
+      │   ├── Numero (entero): 10 (L:1, C:1)
+      │   └── Numero (entero): 5 (L:1, C:6)
+      └── TerminoLogico/Comparacion [Op: '<='] (L:1, C:13)
+          ├── Numero (entero): 3 (L:1, C:11)
+          └── Numero (entero): 4 (L:1, C:16)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V4: EXPRESIÓN ARITMÉTICA CON AGRUPACIONES CRUZADAS [OFICIAL] (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '(x + y) * (z - w)'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: ( (PARENTESIS_IZQ) | x (IDENTIFICADOR) | + (OP_SUMA) | y (IDENTIFICADOR) | ) (PARENTESIS_DER) | * (OP_MULTIPLICACION) | ( (PARENTESIS_IZQ) | z (IDENTIFICADOR) | - (OP_RESTA) | w (IDENTIFICADOR) | ) (PARENTESIS_DER)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ExpresionAritmetica/Operacion [Op: '*'] (L:1, C:9)
+      ├── SubexpresionAgrupada '( )' (L:1, C:1)
+      │   └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:4)
+      │       ├── Identificador: 'x' (L:1, C:2)
+      │       └── Identificador: 'y' (L:1, C:6)
+      └── SubexpresionAgrupada '( )' (L:1, C:11)
+          └── ExpresionAritmetica/Operacion [Op: '-'] (L:1, C:14)
+              ├── Identificador: 'z' (L:1, C:12)
+              └── Identificador: 'w' (L:1, C:16)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V5: EXPRESIÓN LÓGICA CON DISYUNCIÓN (||) Y DESIGUALDAD (!=) (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: 'total >= 100 || descuento != 0'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: total (IDENTIFICADOR) | >= (OP_MAYOR_IGUAL) | 100 (NUMERO_ENTERO) | || (OP_OR) | descuento (IDENTIFICADOR) | != (OP_DIFERENTE) | 0 (NUMERO_ENTERO)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ExpresionLogica [Op: '||'] (L:1, C:14)
+      ├── TerminoLogico/Comparacion [Op: '>='] (L:1, C:7)
+      │   ├── Identificador: 'total' (L:1, C:1)
+      │   └── Numero (entero): 100 (L:1, C:10)
+      └── TerminoLogico/Comparacion [Op: '!='] (L:1, C:27)
+          ├── Identificador: 'descuento' (L:1, C:17)
+          └── Numero (entero): 0 (L:1, C:30)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V6: EXPRESIÓN DE IGUALDAD RELACIONAL (==) CON FÓRMULA (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '(base * altura) / 2 == area'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: ( (PARENTESIS_IZQ) | base (IDENTIFICADOR) | * (OP_MULTIPLICACION) | altura (IDENTIFICADOR) | ) (PARENTESIS_DER) | / (OP_DIVISION) | 2 (NUMERO_ENTERO) | == (OP_IGUAL) | area (IDENTIFICADOR)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── TerminoLogico/Comparacion [Op: '=='] (L:1, C:21)
+      ├── ExpresionAritmetica/Operacion [Op: '/'] (L:1, C:17)
+      │   ├── SubexpresionAgrupada '( )' (L:1, C:1)
+      │   │   └── ExpresionAritmetica/Operacion [Op: '*'] (L:1, C:7)
+      │   │       ├── Identificador: 'base' (L:1, C:2)
+      │   │       └── Identificador: 'altura' (L:1, C:9)
+      │   └── Numero (entero): 2 (L:1, C:19)
+      └── Identificador: 'area' (L:1, C:24)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V7: EXPRESIÓN LÓGICA COMBINADA CON PARÉNTESIS (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '(x > 0 && y > 0) || z == 100'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: ( (PARENTESIS_IZQ) | x (IDENTIFICADOR) | > (OP_MAYOR) | 0 (NUMERO_ENTERO) | && (OP_AND) | y (IDENTIFICADOR) | > (OP_MAYOR) | 0 (NUMERO_ENTERO) | ) (PARENTESIS_DER) | || (OP_OR) | z (IDENTIFICADOR) | == (OP_IGUAL) | 100 (NUMERO_ENTERO)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ExpresionLogica [Op: '||'] (L:1, C:18)
+      ├── SubexpresionAgrupada '( )' (L:1, C:1)
+      │   └── ExpresionLogica [Op: '&&'] (L:1, C:8)
+      │       ├── TerminoLogico/Comparacion [Op: '>'] (L:1, C:4)
+      │       │   ├── Identificador: 'x' (L:1, C:2)
+      │       │   └── Numero (entero): 0 (L:1, C:6)
+      │       └── TerminoLogico/Comparacion [Op: '>'] (L:1, C:13)
+      │           ├── Identificador: 'y' (L:1, C:11)
+      │           └── Numero (entero): 0 (L:1, C:15)
+      └── TerminoLogico/Comparacion [Op: '=='] (L:1, C:23)
+          ├── Identificador: 'z' (L:1, C:21)
+          └── Numero (entero): 100 (L:1, C:26)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V8: EXPRESIÓN ARITMÉTICA COMPLEJA ANIDADA (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '25 * (a + b) / (c - d) + 10'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: 25 (NUMERO_ENTERO) | * (OP_MULTIPLICACION) | ( (PARENTESIS_IZQ) | a (IDENTIFICADOR) | + (OP_SUMA) | b (IDENTIFICADOR) | ) (PARENTESIS_DER) | / (OP_DIVISION) | ( (PARENTESIS_IZQ) | c (IDENTIFICADOR) | - (OP_RESTA) | d (IDENTIFICADOR) | ) (PARENTESIS_DER) | + (OP_SUMA) | 10 (NUMERO_ENTERO)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:24)
+      ├── ExpresionAritmetica/Operacion [Op: '/'] (L:1, C:14)
+      │   ├── ExpresionAritmetica/Operacion [Op: '*'] (L:1, C:4)
+      │   │   ├── Numero (entero): 25 (L:1, C:1)
+      │   │   └── SubexpresionAgrupada '( )' (L:1, C:6)
+      │   │       └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:9)
+      │   │           ├── Identificador: 'a' (L:1, C:7)
+      │   │           └── Identificador: 'b' (L:1, C:11)
+      │   └── SubexpresionAgrupada '( )' (L:1, C:16)
+      │       └── ExpresionAritmetica/Operacion [Op: '-'] (L:1, C:19)
+      │           ├── Identificador: 'c' (L:1, C:17)
+      │           └── Identificador: 'd' (L:1, C:21)
+      └── Numero (entero): 10 (L:1, C:26)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V9: ARITMÉTICA CON FLOTANTES Y COMPARACIÓN RELACIONAL (<=) (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: 'precio * (1 - 0.15) <= presupuesto'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: precio (IDENTIFICADOR) | * (OP_MULTIPLICACION) | ( (PARENTESIS_IZQ) | 1 (NUMERO_ENTERO) | - (OP_RESTA) | 0.15 (NUMERO_FLOTANTE) | ) (PARENTESIS_DER) | <= (OP_MENOR_IGUAL) | presupuesto (IDENTIFICADOR)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── TerminoLogico/Comparacion [Op: '<='] (L:1, C:21)
+      ├── ExpresionAritmetica/Operacion [Op: '*'] (L:1, C:8)
+      │   ├── Identificador: 'precio' (L:1, C:1)
+      │   └── SubexpresionAgrupada '( )' (L:1, C:10)
+      │       └── ExpresionAritmetica/Operacion [Op: '-'] (L:1, C:13)
+      │           ├── Numero (entero): 1 (L:1, C:11)
+      │           └── Numero (flotante): 0.15 (L:1, C:15)
+      └── Identificador: 'presupuesto' (L:1, C:24)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO V10: EXPRESIÓN LÓGICA CON NEGACIÓN UNARIA (!) (VÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '!activo && (contador + 1 < limite)'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: ! (OP_NOT) | activo (IDENTIFICADOR) | && (OP_AND) | ( (PARENTESIS_IZQ) | contador (IDENTIFICADOR) | + (OP_SUMA) | 1 (NUMERO_ENTERO) | < (OP_MENOR) | limite (IDENTIFICADOR) | ) (PARENTESIS_DER)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO] (0 Errores)
+
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+  └── ExpresionLogica [Op: '&&'] (L:1, C:9)
+      ├── OperacionUnaria [!] (LOGICA) (L:1, C:1)
+      │   └── Identificador: 'activo' (L:1, C:2)
+      └── SubexpresionAgrupada '( )' (L:1, C:12)
+          └── TerminoLogico/Comparacion [Op: '<'] (L:1, C:26)
+              ├── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:22)
+              │   ├── Identificador: 'contador' (L:1, C:13)
+              │   └── Numero (entero): 1 (L:1, C:24)
+              └── Identificador: 'limite' (L:1, C:28)
+
+===============================================================================================
+
+###############################################################################################
+   SECCIÓN 2: PRUEBAS DE EXPRESIONES INVÁLIDAS Y GESTIÓN DE ERRORES
+###############################################################################################
+
+===============================================================================================
+ >>> CASO I1: OPERADOR SIN TÉRMINO (OPERADORES CONSECUTIVOS '+ *') [OFICIAL] (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: 'x + * y'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: x (IDENTIFICADOR) | + (OP_SUMA) | * (OP_MULTIPLICACION) | y (IDENTIFICADOR)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     3  ║ Error: Operador sin término     ║ Operador '+' sin término: no puede  ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Operador sin término en la línea 1, columna 3. Operador '+' sin término: no puede ir seguido del operador '*'.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:3)
+      ├── Identificador: 'x' (L:1, C:1)
+      └── Identificador: 'y' (L:1, C:7)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I2: COMPARACIÓN INVÁLIDA (RELACIONAL SIN EXPRESIÓN DERECHA) [OFICIAL] (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '10 >'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: 10 (NUMERO_ENTERO) | > (OP_MAYOR)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     4  ║ Error: Comparación inválida     ║ Comparación incompleta: falta la ex ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Comparación inválida en la línea 1, columna 4. Comparación incompleta: falta la expresión aritmética derecha tras '>'.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── TerminoLogico/Comparacion [Op: '>'] (L:1, C:4)
+      ├── Numero (entero): 10 (L:1, C:1)
+      └── [NODO ERROR SINTÁCTICO: Expresión aritmética derecha faltante] (L:1, C:5)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I3: PARÉNTESIS DESBALANCEADOS (FALTA CIERRE ')') [OFICIAL] (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '(a - b'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: ( (PARENTESIS_IZQ) | a (IDENTIFICADOR) | - (OP_RESTA) | b (IDENTIFICADOR)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     1  ║ Error: Paréntesis desbalanceado ║ Falta el paréntesis de cierre ')' c ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Paréntesis desbalanceados en la línea 1, columna 1. Falta el paréntesis de cierre ')' correspondiente abierto en la columna 1.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── SubexpresionAgrupada '( )' (L:1, C:1)
+      └── ExpresionAritmetica/Operacion [Op: '-'] (L:1, C:4)
+          ├── Identificador: 'a' (L:1, C:2)
+          └── Identificador: 'b' (L:1, C:6)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I4: PARÉNTESIS DESBALANCEADOS Y OPERADOR SIN TÉRMINO [OFICIAL] (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '5 / (2 + )'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: 5 (NUMERO_ENTERO) | / (OP_DIVISION) | ( (PARENTESIS_IZQ) | 2 (NUMERO_ENTERO) | + (OP_SUMA) | ) (PARENTESIS_DER)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     8  ║ Error: Operador sin término     ║ El operador '+' carece de término a ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Operador sin término en la línea 1, columna 8. El operador '+' carece de término a la derecha.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── ExpresionAritmetica/Operacion [Op: '/'] (L:1, C:3)
+      ├── Numero (entero): 5 (L:1, C:1)
+      └── SubexpresionAgrupada '( )' (L:1, C:5)
+          └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:8)
+              ├── Numero (entero): 2 (L:1, C:6)
+              └── [NODO ERROR SINTÁCTICO: Término faltante] (L:1, C:9)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I5: OPERADOR LÓGICO SIN TÉRMINO DERECHO ('&&') (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '10 > 5 &&'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: 10 (NUMERO_ENTERO) | > (OP_MAYOR) | 5 (NUMERO_ENTERO) | && (OP_AND)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     8  ║ Error: Expresión lógica incompl ║ Falta el término lógico derecho tra ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Expresión lógica incompleta o malformada en la línea 1, columna 8. Falta el término lógico derecho tras el operador '&&'.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── ExpresionLogica [Op: '&&'] (L:1, C:8)
+      ├── TerminoLogico/Comparacion [Op: '>'] (L:1, C:4)
+      │   ├── Numero (entero): 10 (L:1, C:1)
+      │   └── Numero (entero): 5 (L:1, C:6)
+      └── [NODO ERROR SINTÁCTICO: Término lógico faltante] (L:1, C:10)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I6: OPERADOR LÓGICO AL INICIO SIN TÉRMINO IZQUIERDO ('&&') (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '&& 3 <= 4'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: && (OP_AND) | 3 (NUMERO_ENTERO) | <= (OP_MENOR_IGUAL) | 4 (NUMERO_ENTERO)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     1  ║ Error: Expresión lógica incompl ║ La expresión no puede comenzar con  ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Expresión lógica incompleta o malformada en la línea 1, columna 1. La expresión no puede comenzar con el operador lógico '&&'.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── TerminoLogico/Comparacion [Op: '<='] (L:1, C:6)
+      ├── Numero (entero): 3 (L:1, C:4)
+      └── Numero (entero): 4 (L:1, C:9)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I7: PARÉNTESIS DESBALANCEADOS POR CIERRE SOBRANTE (')') (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '(x + y)) * 2'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: ( (PARENTESIS_IZQ) | x (IDENTIFICADOR) | + (OP_SUMA) | y (IDENTIFICADOR) | ) (PARENTESIS_DER) | ) (PARENTESIS_DER) | * (OP_MULTIPLICACION) | 2 (NUMERO_ENTERO)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (3 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     8  ║ Error: Paréntesis desbalanceado ║ Paréntesis de cierre ')' sobrante o ║
+  ║   2 ║     1  ║    10  ║ Error: Operador sin término     ║ El operador '*' se encuentra al fin ║
+  ║   3 ║     1  ║    12  ║ Error: Falta operador entre tér ║ Falta un operador aritmético o rela ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Paréntesis desbalanceados en la línea 1, columna 8. Paréntesis de cierre ')' sobrante o sin apertura previa.
+   [2] Error: Operador sin término en la línea 1, columna 10. El operador '*' se encuentra al final sin término posterior.
+   [3] Error: Falta operador entre términos antes de '2' en la línea 1, columna 12. Falta un operador aritmético o relacional antes de '2'.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── SubexpresionAgrupada '( )' (L:1, C:1)
+      └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:4)
+          ├── Identificador: 'x' (L:1, C:2)
+          └── Identificador: 'y' (L:1, C:6)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I8: FALTA DE OPERADOR ENTRE TÉRMINOS ADYACENTES (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: 'a + b c'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: a (IDENTIFICADOR) | + (OP_SUMA) | b (IDENTIFICADOR) | c (IDENTIFICADOR)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     7  ║ Error: Falta operador entre tér ║ Falta un operador aritmético o rela ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Falta operador entre términos antes de 'c' en la línea 1, columna 7. Falta un operador aritmético o relacional antes de 'c'.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:3)
+      ├── Identificador: 'a' (L:1, C:1)
+      └── Identificador: 'b' (L:1, C:5)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I9: OPERADORES DE COMPARACIÓN CONSECUTIVOS ('== >') (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: 'x == > y'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: x (IDENTIFICADOR) | == (OP_IGUAL) | > (OP_MAYOR) | y (IDENTIFICADOR)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     3  ║ Error: Comparación inválida     ║ Operadores de comparación consecuti ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Comparación inválida en la línea 1, columna 3. Operadores de comparación consecutivos '==' y '>' inválidos.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── TerminoLogico/Comparacion [Op: '=='] (L:1, C:3)
+      ├── Identificador: 'x' (L:1, C:1)
+      └── Identificador: 'y' (L:1, C:8)
+
+===============================================================================================
+
+===============================================================================================
+ >>> CASO I10: OPERADOR MULTIPLICATIVO AL INICIO ('*') (INVÁLIDA) <<<
+===============================================================================================
+ [EXPRESIÓN ANALIZADA]: '* 5 + 10'
+-----------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS]: * (OP_MULTIPLICACION) | 5 (NUMERO_ENTERO) | + (OP_SUMA) | 10 (NUMERO_ENTERO)
+-----------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERRORES DETECTADOS] (1 Errores)
+
+  ╔═══════════════════════════════════════════════════════════════════════════════════════════════╗
+  ║                      TABLA DE DIAGNÓSTICO DE ERRORES SINTÁCTICOS                              ║
+  ╠═════╦════════╦════════╦═════════════════════════════════╦═════════════════════════════════════╣
+  ║  #  ║ LÍNEA  ║  COL.  ║ MENSAJE ESTÁNDAR DE ERROR       ║ SUGERENCIA PEDAGÓGICA               ║
+  ╠═════╬════════╬════════╬═════════════════════════════════╬═════════════════════════════════════╣
+  ║   1 ║     1  ║     1  ║ Error: Operador sin término     ║ El operador '*' no puede iniciar un ║
+  ╚═════╩════════╩════════╩═════════════════════════════════╩═════════════════════════════════════╝
+
+  [DETALLE PRECISO DE CADA ERROR]:
+   [1] Error: Operador sin término en la línea 1, columna 1. El operador '*' no puede iniciar una expresión sin un término previo.
+
+  ESTRUCTURA RECUPERADA EN EL AST:
+  └── ExpresionAritmetica/Operacion [Op: '+'] (L:1, C:5)
+      ├── Numero (entero): 5 (L:1, C:3)
+      └── Numero (entero): 10 (L:1, C:7)
+
+===============================================================================================
+
+===============================================================================================
+   TABLA RESUMEN DE RESULTADOS DE LA SUITE DE PRUEBAS
+===============================================================================================
+ #   | CATEGORÍA | EXPRESIÓN                           | RESULTADO          | ESTADO      
+-----------------------------------------------------------------------------------------------
+ 1   | VÁLIDA    | x + y * 5                           | CORRECTO           | PASÓ (100%)
+ 2   | VÁLIDA    | (a - b) / c                         | CORRECTO           | PASÓ (100%)
+ 3   | VÁLIDA    | 10 > 5 && 3 <= 4                    | CORRECTO           | PASÓ (100%)
+ 4   | VÁLIDA    | (x + y) * (z - w)                   | CORRECTO           | PASÓ (100%)
+ 5   | VÁLIDA    | total >= 100 || descuento != 0      | CORRECTO           | PASÓ (100%)
+ 6   | VÁLIDA    | (base * altura) / 2 == area         | CORRECTO           | PASÓ (100%)
+ 7   | VÁLIDA    | (x > 0 && y > 0) || z == 100        | CORRECTO           | PASÓ (100%)
+ 8   | VÁLIDA    | 25 * (a + b) / (c - d) + 10         | CORRECTO           | PASÓ (100%)
+ 9   | VÁLIDA    | precio * (1 - 0.15) <= presupuesto  | CORRECTO           | PASÓ (100%)
+ 10  | VÁLIDA    | !activo && (contador + 1 < limite)  | CORRECTO           | PASÓ (100%)
+ 11  | INVÁLIDA  | x + * y                             | ERROR CAPTURADO    | PASÓ (100%)
+ 12  | INVÁLIDA  | 10 >                                | ERROR CAPTURADO    | PASÓ (100%)
+ 13  | INVÁLIDA  | (a - b                              | ERROR CAPTURADO    | PASÓ (100%)
+ 14  | INVÁLIDA  | 5 / (2 + )                          | ERROR CAPTURADO    | PASÓ (100%)
+ 15  | INVÁLIDA  | 10 > 5 &&                           | ERROR CAPTURADO    | PASÓ (100%)
+ 16  | INVÁLIDA  | && 3 <= 4                           | ERROR CAPTURADO    | PASÓ (100%)
+ 17  | INVÁLIDA  | (x + y)) * 2                        | ERROR CAPTURADO    | PASÓ (100%)
+ 18  | INVÁLIDA  | a + b c                             | ERROR CAPTURADO    | PASÓ (100%)
+ 19  | INVÁLIDA  | x == > y                            | ERROR CAPTURADO    | PASÓ (100%)
+ 20  | INVÁLIDA  | * 5 + 10                            | ERROR CAPTURADO    | PASÓ (100%)
+===============================================================================================
+
+===============================================================================================
+   EJECUCIÓN DEL ANALIZADOR SINTÁCTICO FINALIZADA EXITOSAMENTE
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+===============================================================================================
