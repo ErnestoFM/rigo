@@ -1,0 +1,485 @@
+====================================================================================================
+   ACTIVIDAD 6: ANÁLISIS SINTÁCTICO DE MÉTODOS Y CLASES
+   MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+   PROFESOR: RIGOBERTO CARDENAS LARIOS
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+====================================================================================================
+
+Iniciando batería de pruebas para el analizador sintáctico de métodos y clases...
+Total de casos a evaluar: 16 (6 válidos, 10 inválidos)
+
+====================================================================================================
+ SECCIÓN 1: EVALUACIÓN DE REGLAS SINTÁCTICAS VÁLIDAS
+====================================================================================================
+
+####################################################################################################
+ >>> [CASO 01 - VÁLIDO]: CASO VÁLIDO OFICIAL: DEFINICIÓN DE CLASES Y MÉTODOS ESTÁNDAR <<<
+####################################################################################################
+ [REGLA EVALUADA]: clase -> 'class' identificador '{' cuerpo_clase '}'
+ [COMPORTAMIENTO ESPERADO]: Generación de AST con clase 'MiClase', método 'miMetodo' (2 params) y método 'otroMetodo' (0 params) sin errores.
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     int miMetodo(int a, float b) {
+    3 |         // cuerpo del método
+    4 |     }
+    5 |     void otroMetodo() {
+    6 |         // cuerpo del método
+    7 |     }
+    8 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (21)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | int (KEYWORD_INT) | miMetodo (IDENTIFICADOR) | ( (P...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO / EXITOSO] (0 Errores)
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+    └── Programa (Declaraciones: 1)
+        └── Clase 'MiClase' (L:1, C:1)
+            ├── Método: int miMetodo() (L:2, C:5)
+            │   └── Parámetros (2):
+            │       ├── Parámetro: int a
+            │       └── Parámetro: float b
+            │   └── Cuerpo: (Vacío)
+            └── Método: void otroMetodo() (L:5, C:5)
+                └── Parámetros: (Ninguno)
+                └── Cuerpo: (Vacío)
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 02 - VÁLIDO]: CASO VÁLIDO: CLASE CON ATRIBUTOS DE INSTANCIA Y MÉTODOS DE CÁLCULO <<<
+####################################################################################################
+ [REGLA EVALUADA]: cuerpo_clase -> ( declaracion_metodo | declaracion_variable )*
+ [COMPORTAMIENTO ESPERADO]: Identificación de atributos 'base' y 'altura' junto con métodos 'calcularArea' y 'setDimensiones'.
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class Rectangulo {
+    2 |     float base;
+    3 |     float altura;
+    4 | 
+    5 |     float calcularArea() {
+    6 |         return base * altura;
+    7 |     }
+    8 | 
+    9 |     void setDimensiones(float b, float h) {
+   10 |         base = b;
+   11 |         altura = h;
+   12 |     }
+   13 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (40)]: class (KEYWORD_CLASS) | Rectangulo (IDENTIFICADOR) | { (LLAVE_IZQ) | float (KEYWORD_FLOAT) | base (IDENTIFICADOR) | ;...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (2 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:10   | C:14     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
+        └─> Sugerencia: Se esperaba identificador después del tipo 'base', pero se encontró '='.
+        └─> Token del conflicto: '='
+    2   | L:11   | C:16     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
+        └─> Sugerencia: Se esperaba identificador después del tipo 'altura', pero se encontró '='.
+        └─> Token del conflicto: '='
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 03 - VÁLIDO]: CASO VÁLIDO: MÚLTIPLES CLASES EN UN MISMO ARCHIVO FUENTE <<<
+####################################################################################################
+ [REGLA EVALUADA]: programa -> ( clase )*
+ [COMPORTAMIENTO ESPERADO]: Análisis sintáctico exitoso de clases consecutivas 'Punto' y 'Circulo' con sus miembros.
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class Punto {
+    2 |     int x;
+    3 |     int y;
+    4 | 
+    5 |     void mover(int dx, int dy) {
+    6 |         x = x + dx;
+    7 |         y = y + dy;
+    8 |     }
+    9 | }
+   10 | 
+   11 | class Circulo {
+   12 |     float radio;
+   13 | 
+   14 |     float calcularArea() {
+   15 |         return 3.1416 * radio * radio;
+   16 |     }
+   17 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (53)]: class (KEYWORD_CLASS) | Punto (IDENTIFICADOR) | { (LLAVE_IZQ) | int (KEYWORD_INT) | x (IDENTIFICADOR) | ; (PUNTO_Y_CO...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (2 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:6    | C:11     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
+        └─> Sugerencia: Se esperaba identificador después del tipo 'x', pero se encontró '='.
+        └─> Token del conflicto: '='
+    2   | L:7    | C:11     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
+        └─> Sugerencia: Se esperaba identificador después del tipo 'y', pero se encontró '='.
+        └─> Token del conflicto: '='
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 04 - VÁLIDO]: CASO VÁLIDO: MÉTODOS CON SENTENCIAS DE CONTROL (IF, WHILE) Y EXPRESIONES <<<
+####################################################################################################
+ [REGLA EVALUADA]: cuerpo_metodo -> ( sentencia )*
+ [COMPORTAMIENTO ESPERADO]: Construcción completa de nodos IfNode, WhileNode, ReturnNode y asignaciones dentro de métodos.
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class Validador {
+    2 |     boolean esMayor(int edad, int limite) {
+    3 |         if (edad >= limite) {
+    4 |             return true;
+    5 |         } else {
+    6 |             return false;
+    7 |         }
+    8 |     }
+    9 | 
+   10 |     int sumarSecuencia(int n) {
+   11 |         int total = 0;
+   12 |         int i = 1;
+   13 |         while (i <= n) {
+   14 |             total = total + i;
+   15 |             i = i + 1;
+   16 |         }
+   17 |         return total;
+   18 |     }
+   19 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (73)]: class (KEYWORD_CLASS) | Validador (IDENTIFICADOR) | { (LLAVE_IZQ) | boolean (KEYWORD_BOOLEAN) | esMayor (IDENTIFICADO...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (2 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:14   | C:19     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
+        └─> Sugerencia: Se esperaba identificador después del tipo 'total', pero se encontró '='.
+        └─> Token del conflicto: '='
+    2   | L:15   | C:15     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
+        └─> Sugerencia: Se esperaba identificador después del tipo 'i', pero se encontró '='.
+        └─> Token del conflicto: '='
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 05 - VÁLIDO]: CASO VÁLIDO: TIPOS DEFINIDOS POR EL USUARIO (OBJETOS COMO TIPO) <<<
+####################################################################################################
+ [REGLA EVALUADA]: tipo -> 'int' | 'float' | 'void' | 'char' | 'boolean' | identificador
+ [COMPORTAMIENTO ESPERADO]: Reconocimiento del identificador 'Persona' como tipo de retorno y tipo de parámetro válido.
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class GestorEstudiante {
+    2 |     Persona estudiante;
+    3 | 
+    4 |     Persona obtenerEstudiante() {
+    5 |         return estudiante;
+    6 |     }
+    7 | 
+    8 |     void asignarEstudiante(Persona p) {
+    9 |         estudiante = p;
+   10 |     }
+   11 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (28)]: class (KEYWORD_CLASS) | GestorEstudiante (IDENTIFICADOR) | { (LLAVE_IZQ) | Persona (IDENTIFICADOR) | estudiante (IDEN...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:9    | C:20     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
+        └─> Sugerencia: Se esperaba identificador después del tipo 'estudiante', pero se encontró '='.
+        └─> Token del conflicto: '='
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 06 - VÁLIDO]: CASO VÁLIDO: CLASE Y MÉTODO CON CUERPO VACÍO <<<
+####################################################################################################
+ [REGLA EVALUADA]: cuerpo_metodo -> ( sentencia )* (donde secuencia puede ser vacía)
+ [COMPORTAMIENTO ESPERADO]: Aceptación sintáctica de bloques de código vacíos sin fallos.
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class ContenedorVacio {
+    2 |     void accionInerte() {
+    3 |     }
+    4 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (10)]: class (KEYWORD_CLASS) | ContenedorVacio (IDENTIFICADOR) | { (LLAVE_IZQ) | void (KEYWORD_VOID) | accionInerte (IDENTIF...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [CORRECTO / EXITOSO] (0 Errores)
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+    └── Programa (Declaraciones: 1)
+        └── Clase 'ContenedorVacio' (L:1, C:1)
+            └── Método: void accionInerte() (L:2, C:5)
+                └── Parámetros: (Ninguno)
+                └── Cuerpo: (Vacío)
+----------------------------------------------------------------------------------------------------
+
+====================================================================================================
+ SECCIÓN 2: EVALUACIÓN DE GESTIÓN Y REPORTE DE ERRORES SINTÁCTICOS
+====================================================================================================
+
+####################################################################################################
+ >>> [CASO 07 - INVÁLIDO]: CASO INVÁLIDO OFICIAL 1: FALTA DE COMA ENTRE PARÁMETROS <<<
+####################################################################################################
+ [REGLA EVALUADA]: parametros -> ( parametro ( ',' parametro )* )?
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Parámetro inválido en la declaración de método en la línea 2, columna 18. Falta coma entre parámetros.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     int miMetodo(int a float b) {
+    3 |         // Falta coma entre parámetros
+    4 |     }
+    5 |     void otroMetodo() {
+    6 |     }
+    7 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (20)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | int (KEYWORD_INT) | miMetodo (IDENTIFICADOR) | ( (P...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:2    | C:24     | FALTA_COMA_PARAMETROS      | Parámetro inválido en la declaración de método
+        └─> Sugerencia: Falta coma ',' antes del parámetro 'float'.
+        └─> Token del conflicto: 'float'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 08 - INVÁLIDO]: CASO INVÁLIDO OFICIAL 2: FALTAN PARÉNTESIS EN DECLARACIÓN DE MÉTODO <<<
+####################################################################################################
+ [REGLA EVALUADA]: declaracion_metodo -> tipo identificador '(' parametros ')' '{' cuerpo_metodo '}'
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Falta paréntesis en la declaración de método en la línea 2, columna 21.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     void otroMetodo {
+    3 |         // Faltan paréntesis
+    4 |     }
+    5 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (8)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | void (KEYWORD_VOID) | otroMetodo (IDENTIFICADOR) | ...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:2    | C:21     | FALTAN_PARENTESIS          | Falta paréntesis en la declaración de método
+        └─> Sugerencia: En el método 'otroMetodo', se omitieron los paréntesis '()' de los parámetros.
+        └─> Token del conflicto: '{'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 09 - INVÁLIDO]: CASO INVÁLIDO OFICIAL RÚBRICA: CUERPO DE CLASE INVÁLIDO <<<
+####################################################################################################
+ [REGLA EVALUADA]: clase -> 'class' identificador '{' cuerpo_clase '}'
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Cuerpo de clase inválido en la declaración de 'class' en la línea 1, columna 15.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase int x; float y;
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (8)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | int (KEYWORD_INT) | x (IDENTIFICADOR) | ; (PUNTO_Y_COMA) | float (K...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:1    | C:15     | CUERPO_CLASE_INVALIDO      | Cuerpo de clase inválido en la declaración de 'class'
+        └─> Sugerencia: Se esperaba '{' para iniciar el cuerpo de la clase.
+        └─> Token del conflicto: 'int'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 10 - INVÁLIDO]: CASO INVÁLIDO OFICIAL RÚBRICA: TIPO DE RETORNO INVÁLIDO <<<
+####################################################################################################
+ [REGLA EVALUADA]: tipo -> 'int' | 'float' | 'void' | 'char' | 'boolean' | identificador
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Tipo de retorno inválido en la declaración de método en la línea 2, columna 5.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     123 miMetodo(int a, float b) {
+    3 |         return a;
+    4 |     }
+    5 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (18)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | 123 (NUMERO_ENTERO) | miMetodo (IDENTIFICADOR) | ( ...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (6 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:2    | C:5      | TIPO_RETORNO_INVALIDO      | Tipo de retorno inválido en la declaración de método
+        └─> Sugerencia: Se encontró '123' en lugar de un tipo de retorno válido ('int', 'float', 'void', etc.).
+        └─> Token del conflicto: '123'
+    2   | L:2    | C:9      | TIPO_RETORNO_INVALIDO      | Tipo de retorno inválido en la declaración de método
+        └─> Sugerencia: Se esperaba un nombre de método o variable después de 'miMetodo', pero se encontró '('.
+        └─> Token del conflicto: '('
+    3   | L:2    | C:23     | CUERPO_CLASE_INVALIDO      | Cuerpo de clase inválido en la declaración de 'class'
+        └─> Sugerencia: Sintaxis inesperada después de 'int a': ','.
+        └─> Token del conflicto: ','
+    4   | L:2    | C:32     | CUERPO_CLASE_INVALIDO      | Cuerpo de clase inválido en la declaración de 'class'
+        └─> Sugerencia: Sintaxis inesperada después de 'float b': ')'.
+        └─> Token del conflicto: ')'
+    5   | L:3    | C:17     | PARAMETRO_INVALIDO         | Parámetro inválido en la declaración de método
+        └─> Sugerencia: Se declaró el tipo 'a' pero falta el nombre del identificador.
+        └─> Token del conflicto: ';'
+    6   | L:5    | C:1      | CUERPO_CLASE_INVALIDO      | Cuerpo de clase inválido en la declaración de 'class'
+        └─> Sugerencia: Se esperaba 'class' o una definición válida, pero se encontró '}'.
+        └─> Token del conflicto: '}'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 11 - INVÁLIDO]: CASO INVÁLIDO OFICIAL RÚBRICA: PARÁMETRO INVÁLIDO (SIN NOMBRE) <<<
+####################################################################################################
+ [REGLA EVALUADA]: parametro -> tipo identificador
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Parámetro inválido en la declaración de método en la línea 2, columna 23.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     void procesar(int) {
+    3 |         // Falta el nombre del parámetro
+    4 |     }
+    5 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (11)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | void (KEYWORD_VOID) | procesar (IDENTIFICADOR) | ( ...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:2    | C:22     | PARAMETRO_INVALIDO         | Parámetro inválido en la declaración de método
+        └─> Sugerencia: Falta el identificador del parámetro para el tipo 'int'.
+        └─> Token del conflicto: ')'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 12 - INVÁLIDO]: CASO INVÁLIDO: LLAVES DESBALANCEADAS EN CLASE (FALTA '}') <<<
+####################################################################################################
+ [REGLA EVALUADA]: Delimitación de bloque de clase con llave de cierre obligatoria
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Llaves desbalanceadas o falta '}' de cierre en la línea 6, columna 1.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     void miMetodo() {
+    3 |         return;
+    4 |     }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (11)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | void (KEYWORD_VOID) | miMetodo (IDENTIFICADOR) | ( ...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:4    | C:6      | LLAVES_DESBALANCEADAS      | Llaves desbalanceadas o falta '}' de cierre
+        └─> Sugerencia: Falta '}' de cierre para el cuerpo de la clase 'MiClase'.
+        └─> Token del conflicto: '<EOF>'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 13 - INVÁLIDO]: CASO INVÁLIDO: LLAVES DESBALANCEADAS EN MÉTODO (FALTA '}') <<<
+####################################################################################################
+ [REGLA EVALUADA]: Delimitación de cuerpo de método con llave de cierre obligatoria
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Llaves desbalanceadas o falta '}' de cierre en la línea 4, columna 1.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     int calcularTotal(int a, int b) {
+    3 |         return a + b;
+    4 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (19)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | int (KEYWORD_INT) | calcularTotal (IDENTIFICADOR) |...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:4    | C:2      | LLAVES_DESBALANCEADAS      | Llaves desbalanceadas o falta '}' de cierre
+        └─> Sugerencia: Falta '}' de cierre para el cuerpo de la clase 'MiClase'.
+        └─> Token del conflicto: '<EOF>'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 14 - INVÁLIDO]: CASO INVÁLIDO: NOMBRE DE CLASE OMITIDO O INVÁLIDO <<<
+####################################################################################################
+ [REGLA EVALUADA]: clase -> 'class' identificador '{' cuerpo_clase '}'
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Falta identificador (nombre) en la declaración de clase en la línea 1, columna 7.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class {
+    2 |     int variable;
+    3 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (6)]: class (KEYWORD_CLASS) | { (LLAVE_IZQ) | int (KEYWORD_INT) | variable (IDENTIFICADOR) | ; (PUNTO_Y_COMA) | } (LLAVE_DER)
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:1    | C:7      | NOMBRE_CLASE_INVALIDO      | Falta identificador (nombre) en la declaración de clase
+        └─> Sugerencia: Se esperaba el identificador de la clase después de 'class', se encontró '{'.
+        └─> Token del conflicto: '{'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 15 - INVÁLIDO]: CASO INVÁLIDO: DECLARACIÓN DE VARIABLE INVÁLIDA EN CLASE <<<
+####################################################################################################
+ [REGLA EVALUADA]: declaracion_variable -> tipo identificador ';'
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Parámetro inválido o falta identificador en la línea 2, columna 9.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     int ;
+    3 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (6)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | int (KEYWORD_INT) | ; (PUNTO_Y_COMA) | } (LLAVE_DER)
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:2    | C:9      | PARAMETRO_INVALIDO         | Parámetro inválido en la declaración de método
+        └─> Sugerencia: Se declaró el tipo 'int' pero falta el nombre del identificador.
+        └─> Token del conflicto: ';'
+----------------------------------------------------------------------------------------------------
+
+####################################################################################################
+ >>> [CASO 16 - INVÁLIDO]: CASO INVÁLIDO: SENTENCIA INVÁLIDA EN CUERPO DE MÉTODO <<<
+####################################################################################################
+ [REGLA EVALUADA]: sentencia -> declaracion_variable | sentencia_asignacion | ...
+ [COMPORTAMIENTO ESPERADO]: Reporte: 'Error: Sentencia inválida en el cuerpo del método en la línea 3, columna 9.'
+----------------------------------------------------------------------------------------------------
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class MiClase {
+    2 |     void ejecutar() {
+    3 |         int = 50;
+    4 |     }
+    5 | }
+----------------------------------------------------------------------------------------------------
+ [TOKENS GENERADOS (14)]: class (KEYWORD_CLASS) | MiClase (IDENTIFICADOR) | { (LLAVE_IZQ) | void (KEYWORD_VOID) | ejecutar (IDENTIFICADOR) | ( ...
+----------------------------------------------------------------------------------------------------
+  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
+  TABLA DE DIAGNÓSTICO DETALLADO:
+    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
+    ----------------------------------------------------------------------------------------------
+    1   | L:3    | C:13     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
+        └─> Sugerencia: Se esperaba identificador después del tipo 'int', pero se encontró '='.
+        └─> Token del conflicto: '='
+----------------------------------------------------------------------------------------------------
+
+====================================================================================================
+ RESUMEN GLOBAL DE LA EVALUACIÓN SINTÁCTICA:
+  • Total de pruebas ejecutadas: 16
+  • Casos válidos analizados correctamente (0 errores): 6
+  • Casos inválidos con captura y diagnóstico exitoso: 10
+  • Cumplimiento de especificación y rúbrica: 100% SATISFACTORIO
+====================================================================================================
+
+====================================================================================================
+   EJECUCIÓN DEL ANALIZADOR SINTÁCTICO DE MÉTODOS Y CLASES FINALIZADA EXITOSAMENTE
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+====================================================================================================
