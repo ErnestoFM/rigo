@@ -1,0 +1,864 @@
+==============================================================================================================
+   ACTIVIDAD 13: GENERACIÓN DE CÓDIGO (CÓDIGO INTERMEDIO A CÓDIGO MÁQUINA EJECUTABLE)
+   MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+   PROFESOR: RIGOBERTO CARDENAS LARIOS
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+==============================================================================================================
+
+INICIANDO BANCO DE PRUEBAS DE GENERACIÓN DE CÓDIGO MÁQUINA Y EJECUCIÓN...
+Total de casos a evaluar: 10 (5 válidos, 5 inválidos).
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 01 - VÁLIDO]: MAPEO DIRECTO Y ASIGNACIÓN DE MEMORIA ARITMÉTICA (EJEMPLO RÚBRICA) (MAPEO_INSTRUCCIONES)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Traducción de instrucciones TAC (suma y multiplicación) a LOAD, ADD, MUL, STORE con asignación en 0x1000 y 0x2000.
+ [COMPORTAMIENTO ESPERADO]: Generación correcta de instrucciones con direcciones 0x1000, 0x1004, 0x1008, 0x100C y ejecución exitosa en la VM con result = (5 + 10) * 2 = 30.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | # Caso oficial de la práctica
+    2 | t1 = a + b
+    3 | t2 = t1 * c
+    4 | result = t2
+    5 | print result
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (+, a, b, t1)                    => t1 = a + b
+    Cuádruplo #02: (*, t1, c, t2)                   => t2 = t1 * c
+    Cuádruplo #03: (=, t2, -, result)               => result = t2
+    Cuádruplo #04: (PRINT, result, -, -)            => print result
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: STORE  0x200C, R1        # Almacenen el resultado temporal en t1
+    0x100C: LOAD   R1, 0x200C        # Carguen el valor de t1 en el registro R1
+    0x1010: MUL    R1, 0x2008        # Multipliquen por c al registro R1
+    0x1014: STORE  0x2010, R1        # Almacenen el resultado temporal en t2
+    0x1018: LOAD   R1, 0x2010        # Carguen t2 en R1
+    0x101C: STORE  0x3000, R1        # Almacenen en result
+    0x1020: PRINT  0x3000            # Imprimir el valor de result
+    0x1024: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: MUL    R1, 0x2008        # Multipliquen por c a R1
+    0x100C: STORE  0x3000, R1        # Almacenen el resultado en result
+    0x1010: PRINT  0x3000            # Imprimir result
+    0x1014: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 10
+    Instrucciones Optimizadas:    6
+    Instrucciones Reducidas:      4
+    Ganancia de Eficiencia:       40.0%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 5               | VARIABLE    |
+| b            | 0x2004      | int      | 10              | VARIABLE    |
+| c            | 0x2008      | int      | 2               | VARIABLE    |
+| t1           | 0x200C      | int      | 0               | TEMPORAL    |
+| t2           | 0x2010      | int      | 0               | TEMPORAL    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_01_mapeo_instrucciones.bin (170 bytes)
+    Archivo Desensamblado (.asm): caso_01_mapeo_instrucciones.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    Resultado: EJECUCIÓN FINALIZADA SATISFACTORIAMENTE (HALT alcanzado).
+
+    --- Trazas de Ciclos de Instrucción (Muestra) ---
+      [Ciclo 001 | PC 0x1000] 0x1000: LOAD   R1, 0x2000       -> R1: 5 | R2: 0 | ZF=0 SF=0
+      [Ciclo 002 | PC 0x1004] 0x1004: ADD    R1, 0x2004       -> R1: 15 | R2: 0 | ZF=0 SF=0
+      [Ciclo 003 | PC 0x1008] 0x1008: MUL    R1, 0x2008       -> R1: 30 | R2: 0 | ZF=0 SF=0
+      [Ciclo 004 | PC 0x100C] 0x100C: STORE  0x3000, R1       -> R1: 30 | R2: 0 | ZF=0 SF=0
+      [Ciclo 005 | PC 0x1010] 0x1010: PRINT  0x3000           -> R1: 30 | R2: 0 | ZF=0 SF=0
+      [Ciclo 006 | PC 0x1014] 0x1014: HALT                    -> R1: 30 | R2: 0 | ZF=0 SF=0
+
+    --- Estado Final del Procesador (CPU) ---
+      REGISTROS: R1: 30 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+      BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+      ESTADO:    PC Final: 0x1014 | Ciclos Totales: 6
+
+    --- Volcado Final de Memoria RAM ---
+      +--------------+----------------+----------------+
+      | Dirección    | Variable / Simb | Valor Almacenado |
+      +--------------+----------------+----------------+
+      | 0x2000       | a              | 5              |
+      | 0x2004       | b              | 10             |
+      | 0x2008       | c              | 2              |
+      | 0x3000       | result         | 30             |
+      +--------------+----------------+----------------+
+
+    --- Salida por Consola del Programa ---
+      > 30
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 02 - VÁLIDO]: OPTIMIZACIÓN DE INSTRUCCIONES POR ENCADENAMIENTO DE REGISTROS (OPTIMIZACION)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Optimización de instrucciones: Encadenamiento directo en R1 para evitar almacenamiento y recarga innecesaria de temporales.
+ [COMPORTAMIENTO ESPERADO]: Reducción del número de instrucciones generadas mediante encadenamiento en R1 (ADD R1, a; ADD R1, b; ADD R1, c; STORE result, R1) con eficiencia calculada.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | # Caso de optimización de la rúbrica
+    2 | t1 = a + b
+    3 | t2 = t1 + c
+    4 | result = t2
+    5 | print result
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (+, a, b, t1)                    => t1 = a + b
+    Cuádruplo #02: (+, t1, c, t2)                   => t2 = t1 + c
+    Cuádruplo #03: (=, t2, -, result)               => result = t2
+    Cuádruplo #04: (PRINT, result, -, -)            => print result
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: STORE  0x200C, R1        # Almacenen el resultado temporal en t1
+    0x100C: LOAD   R1, 0x200C        # Carguen el valor de t1 en el registro R1
+    0x1010: ADD    R1, 0x2008        # Sumen el valor de c al registro R1
+    0x1014: STORE  0x2010, R1        # Almacenen el resultado temporal en t2
+    0x1018: LOAD   R1, 0x2010        # Carguen t2 en R1
+    0x101C: STORE  0x3000, R1        # Almacenen en result
+    0x1020: PRINT  0x3000            # Imprimir el valor de result
+    0x1024: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: ADD    R1, 0x2008        # Sumen c a R1
+    0x100C: STORE  0x3000, R1        # Almacenen el resultado en result
+    0x1010: PRINT  0x3000            # Imprimir result
+    0x1014: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 10
+    Instrucciones Optimizadas:    6
+    Instrucciones Reducidas:      4
+    Ganancia de Eficiencia:       40.0%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 8               | VARIABLE    |
+| b            | 0x2004      | int      | 12              | VARIABLE    |
+| c            | 0x2008      | int      | 20              | VARIABLE    |
+| t1           | 0x200C      | int      | 0               | TEMPORAL    |
+| t2           | 0x2010      | int      | 0               | TEMPORAL    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_02_optimizacion.bin (170 bytes)
+    Archivo Desensamblado (.asm): caso_02_optimizacion.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    Resultado: EJECUCIÓN FINALIZADA SATISFACTORIAMENTE (HALT alcanzado).
+
+    --- Trazas de Ciclos de Instrucción (Muestra) ---
+      [Ciclo 001 | PC 0x1000] 0x1000: LOAD   R1, 0x2000       -> R1: 8 | R2: 0 | ZF=0 SF=0
+      [Ciclo 002 | PC 0x1004] 0x1004: ADD    R1, 0x2004       -> R1: 20 | R2: 0 | ZF=0 SF=0
+      [Ciclo 003 | PC 0x1008] 0x1008: ADD    R1, 0x2008       -> R1: 40 | R2: 0 | ZF=0 SF=0
+      [Ciclo 004 | PC 0x100C] 0x100C: STORE  0x3000, R1       -> R1: 40 | R2: 0 | ZF=0 SF=0
+      [Ciclo 005 | PC 0x1010] 0x1010: PRINT  0x3000           -> R1: 40 | R2: 0 | ZF=0 SF=0
+      [Ciclo 006 | PC 0x1014] 0x1014: HALT                    -> R1: 40 | R2: 0 | ZF=0 SF=0
+
+    --- Estado Final del Procesador (CPU) ---
+      REGISTROS: R1: 40 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+      BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+      ESTADO:    PC Final: 0x1014 | Ciclos Totales: 6
+
+    --- Volcado Final de Memoria RAM ---
+      +--------------+----------------+----------------+
+      | Dirección    | Variable / Simb | Valor Almacenado |
+      +--------------+----------------+----------------+
+      | 0x2000       | a              | 8              |
+      | 0x2004       | b              | 12             |
+      | 0x2008       | c              | 20             |
+      | 0x3000       | result         | 40             |
+      +--------------+----------------+----------------+
+
+    --- Salida por Consola del Programa ---
+      > 40
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 03 - VÁLIDO]: ESTRUCTURA DE CONTROL IF-ELSE CON SALTOS CONDICIONALES Y ETIQUETAS (CONTROL_FLUJO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Mapeo de saltos condicionales (CMP, JGT, JMP) y resolución de etiquetas L1 y L2 a sus direcciones hexadecimales exactas.
+ [COMPORTAMIENTO ESPERADO]: Las etiquetas L1 y L2 son resueltas a direcciones de código válidas (0x10xx) y la VM salta correctamente a L1 dado que a (25) > b (10), asignando result = 1.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | # Control de flujo con salto condicional
+    2 | if a > b goto L1
+    3 | result = 0
+    4 | goto L2
+    5 | L1:
+    6 | result = 1
+    7 | L2:
+    8 | print result
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (IF_GT, a, b, L1)                => if a > b goto L1
+    Cuádruplo #02: (=, 0, -, result)                => result = 0
+    Cuádruplo #03: (GOTO, -, -, L2)                 => goto L2
+    Cuádruplo #04: (LABEL, -, -, L1)                => L1:
+    Cuádruplo #05: (=, 1, -, result)                => result = 1
+    Cuádruplo #06: (LABEL, -, -, L2)                => L2:
+    Cuádruplo #07: (PRINT, result, -, -)            => print result
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen a para comparar
+    0x1004: CMP    R1, 0x2004        # Comparen R1 con b
+    0x1008: JGT    0x1018            # Salto condicional a L1
+    0x100C: LOAD   R1, #0            # Carguen 0 en R1
+    0x1010: STORE  0x3000, R1        # Almacenen en result
+    0x1014: JMP    0x1020            # Salto incondicional a L2
+    0x1018: LOAD   R1, #1            # Carguen 1 en R1
+    0x101C: STORE  0x3000, R1        # Almacenen en result
+    0x1020: PRINT  0x3000            # Imprimir el valor de result
+    0x1024: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen a para comparar
+    0x1004: CMP    R1, 0x2004        # Comparen R1 con b
+    0x1008: JGT    0x1018            # Salto condicional a L1
+    0x100C: LOAD   R1, #0            # Carguen 0 en R1
+    0x1010: STORE  0x3000, R1        # Almacenen en result
+    0x1014: JMP    0x1020            # Salto incondicional a L2
+    0x1018: LOAD   R1, #1            # Carguen 1 en R1
+    0x101C: STORE  0x3000, R1        # Almacenen en result
+    0x1020: PRINT  0x3000            # Imprimir result
+    0x1024: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 10
+    Instrucciones Optimizadas:    10
+    Instrucciones Reducidas:      0
+    Ganancia de Eficiencia:       0.0%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 25              | VARIABLE    |
+| b            | 0x2004      | int      | 10              | VARIABLE    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_03_control_flujo.bin (213 bytes)
+    Archivo Desensamblado (.asm): caso_03_control_flujo.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    Resultado: EJECUCIÓN FINALIZADA SATISFACTORIAMENTE (HALT alcanzado).
+
+    --- Trazas de Ciclos de Instrucción (Muestra) ---
+      [Ciclo 001 | PC 0x1000] 0x1000: LOAD   R1, 0x2000       -> R1: 25 | R2: 0 | ZF=0 SF=0
+      [Ciclo 002 | PC 0x1004] 0x1004: CMP    R1, 0x2004       -> R1: 25 | R2: 0 | ZF=0 SF=0
+      [Ciclo 003 | PC 0x1008] 0x1008: JGT    0x1018           -> R1: 25 | R2: 0 | ZF=0 SF=0
+      [Ciclo 004 | PC 0x1018] 0x1018: LOAD   R1, #1           -> R1: 1 | R2: 0 | ZF=0 SF=0
+      [Ciclo 005 | PC 0x101C] 0x101C: STORE  0x3000, R1       -> R1: 1 | R2: 0 | ZF=0 SF=0
+      [Ciclo 006 | PC 0x1020] 0x1020: PRINT  0x3000           -> R1: 1 | R2: 0 | ZF=0 SF=0
+      ... [1 ciclos adicionales omitidos para brevedad]
+
+    --- Estado Final del Procesador (CPU) ---
+      REGISTROS: R1: 1 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+      BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+      ESTADO:    PC Final: 0x1024 | Ciclos Totales: 7
+
+    --- Volcado Final de Memoria RAM ---
+      +--------------+----------------+----------------+
+      | Dirección    | Variable / Simb | Valor Almacenado |
+      +--------------+----------------+----------------+
+      | 0x2000       | a              | 25             |
+      | 0x2004       | b              | 10             |
+      | 0x3000       | result         | 1              |
+      +--------------+----------------+----------------+
+
+    --- Salida por Consola del Programa ---
+      > 1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 04 - VÁLIDO]: BUCLE ITERATIVO WHILE CON ACUMULADOR Y SALTO HACIA ATRÁS (BUCLES)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Generación de ciclos mediante saltos hacia atrás (JMP) y saltos condicionales de salida (JGE) con actualización de memoria.
+ [COMPORTAMIENTO ESPERADO]: Ejecución cíclica en la VM sumando 0+1+2+3+4 = 10, con salida final result = 10 y detención en HALT.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | # Bucle iterativo de conteo y acumulación
+    2 | L_INICIO:
+    3 | if contador >= limite goto L_FIN
+    4 | acum = acum + contador
+    5 | contador = contador + 1
+    6 | goto L_INICIO
+    7 | L_FIN:
+    8 | result = acum
+    9 | print result
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (LABEL, -, -, L_INICIO)          => L_INICIO:
+    Cuádruplo #02: (IF_GE, contador, limite, L_FIN) => if contador >= limite goto L_FIN
+    Cuádruplo #03: (+, acum, contador, acum)        => acum = acum + contador
+    Cuádruplo #04: (+, contador, 1, contador)       => contador = contador + 1
+    Cuádruplo #05: (GOTO, -, -, L_INICIO)           => goto L_INICIO
+    Cuádruplo #06: (LABEL, -, -, L_FIN)             => L_FIN:
+    Cuádruplo #07: (=, acum, -, result)             => result = acum
+    Cuádruplo #08: (PRINT, result, -, -)            => print result
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen contador para comparar
+    0x1004: CMP    R1, 0x2004        # Comparen R1 con limite
+    0x1008: JGE    0x1028            # Salto condicional a L_FIN
+    0x100C: LOAD   R1, 0x2008        # Carguen el valor de acum en el registro R1
+    0x1010: ADD    R1, 0x2000        # Sumen el valor de contador al registro R1
+    0x1014: STORE  0x2008, R1        # Almacenen el resultado temporal en acum
+    0x1018: LOAD   R1, 0x2000        # Carguen el valor de contador en el registro R1
+    0x101C: ADD    R1, #1            # Sumen el valor de 1 al registro R1
+    0x1020: STORE  0x2000, R1        # Almacenen el resultado temporal en contador
+    0x1024: JMP    0x1000            # Salto incondicional a L_INICIO
+    0x1028: LOAD   R1, 0x2008        # Carguen acum en R1
+    0x102C: STORE  0x3000, R1        # Almacenen en result
+    0x1030: PRINT  0x3000            # Imprimir el valor de result
+    0x1034: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen contador para comparar
+    0x1004: CMP    R1, 0x2004        # Comparen R1 con limite
+    0x1008: JGE    0x1028            # Salto condicional a L_FIN
+    0x100C: LOAD   R1, 0x2008        # Carguen el valor de acum en R1
+    0x1010: ADD    R1, 0x2000        # Sumen el valor de contador al registro R1
+    0x1014: STORE  0x2008, R1        # Almacenen el resultado en acum
+    0x1018: LOAD   R1, 0x2000        # Carguen el valor de contador en R1
+    0x101C: ADD    R1, #1            # Sumen el valor de 1 al registro R1
+    0x1020: STORE  0x2000, R1        # Almacenen el resultado en contador
+    0x1024: JMP    0x1000            # Salto incondicional a L_INICIO
+    0x1028: LOAD   R1, 0x2008        # Carguen acum en R1
+    0x102C: STORE  0x3000, R1        # Almacenen en result
+    0x1030: PRINT  0x3000            # Imprimir result
+    0x1034: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 14
+    Instrucciones Optimizadas:    14
+    Instrucciones Reducidas:      0
+    Ganancia de Eficiencia:       0.0%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| contador     | 0x2000      | int      | 0               | VARIABLE    |
+| limite       | 0x2004      | int      | 5               | VARIABLE    |
+| acum         | 0x2008      | int      | 0               | VARIABLE    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_04_bucles.bin (303 bytes)
+    Archivo Desensamblado (.asm): caso_04_bucles.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    Resultado: EJECUCIÓN FINALIZADA SATISFACTORIAMENTE (HALT alcanzado).
+
+    --- Trazas de Ciclos de Instrucción (Muestra) ---
+      [Ciclo 001 | PC 0x1000] 0x1000: LOAD   R1, 0x2000       -> R1: 0 | R2: 0 | ZF=1 SF=0
+      [Ciclo 002 | PC 0x1004] 0x1004: CMP    R1, 0x2004       -> R1: 0 | R2: 0 | ZF=0 SF=1
+      [Ciclo 003 | PC 0x1008] 0x1008: JGE    0x1028           -> R1: 0 | R2: 0 | ZF=0 SF=1
+      [Ciclo 004 | PC 0x100C] 0x100C: LOAD   R1, 0x2008       -> R1: 0 | R2: 0 | ZF=1 SF=0
+      [Ciclo 005 | PC 0x1010] 0x1010: ADD    R1, 0x2000       -> R1: 0 | R2: 0 | ZF=1 SF=0
+      [Ciclo 006 | PC 0x1014] 0x1014: STORE  0x2008, R1       -> R1: 0 | R2: 0 | ZF=1 SF=0
+      ... [51 ciclos adicionales omitidos para brevedad]
+
+    --- Estado Final del Procesador (CPU) ---
+      REGISTROS: R1: 10 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+      BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+      ESTADO:    PC Final: 0x1034 | Ciclos Totales: 57
+
+    --- Volcado Final de Memoria RAM ---
+      +--------------+----------------+----------------+
+      | Dirección    | Variable / Simb | Valor Almacenado |
+      +--------------+----------------+----------------+
+      | 0x2000       | contador       | 5              |
+      | 0x2004       | limite         | 5              |
+      | 0x2008       | acum           | 10             |
+      | 0x3000       | result         | 10             |
+      +--------------+----------------+----------------+
+
+    --- Salida por Consola del Programa ---
+      > 10
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 05 - VÁLIDO]: PIPELINE COMPLETO DE EXTREMO A EXTREMO DESDE CÓDIGO FUENTE (PIPELINE_COMPLETO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Compilación completa desde código fuente: Léxico -> Sintáctico AST -> Semántico -> TAC -> Código Máquina -> Binario -> VM.
+ [COMPORTAMIENTO ESPERADO]: El compilador procesa el código fuente, genera el TAC, lo traduce a código máquina optimizado, crea el binario y la VM calcula result = (14 + 6) * 2 = 40.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | int a = 14;
+    2 | int b = 6;
+    3 | int result = 0;
+    4 | if (a > b) {
+    5 |     result = (a + b) * 2;
+    6 | } else {
+    7 |     result = a - b;
+    8 | }
+    9 | console.log(result);
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [PIPELINE DE ALTO NIVEL]: Código fuente analizado exitosamente (Léxico -> Sintáctico AST).
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (=, 14, -, a)                    => a = 14
+    Cuádruplo #02: (=, 6, -, b)                     => b = 6
+    Cuádruplo #03: (=, 0, -, result)                => result = 0
+    Cuádruplo #04: (IF_GT, a, b, L1)                => if a > b goto L1
+    Cuádruplo #05: (GOTO, -, -, L2)                 => goto L2
+    Cuádruplo #06: (LABEL, -, -, L1)                => L1:
+    Cuádruplo #07: (+, a, b, t1)                    => t1 = a + b
+    Cuádruplo #08: (*, t1, 2, t2)                   => t2 = t1 * 2
+    Cuádruplo #09: (=, t2, -, result)               => result = t2
+    Cuádruplo #10: (GOTO, -, -, L3)                 => goto L3
+    Cuádruplo #11: (LABEL, -, -, L2)                => L2:
+    Cuádruplo #12: (-, a, b, t3)                    => t3 = a - b
+    Cuádruplo #13: (=, t3, -, result)               => result = t3
+    Cuádruplo #14: (LABEL, -, -, L3)                => L3:
+    Cuádruplo #15: (PRINT, result, -, -)            => print result
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, #14           # Carguen 14 en R1
+    0x1004: STORE  0x2000, R1        # Almacenen en a
+    0x1008: LOAD   R1, #6            # Carguen 6 en R1
+    0x100C: STORE  0x2004, R1        # Almacenen en b
+    0x1010: LOAD   R1, #0            # Carguen 0 en R1
+    0x1014: STORE  0x3000, R1        # Almacenen en result
+    0x1018: LOAD   R1, 0x2000        # Carguen a para comparar
+    0x101C: CMP    R1, 0x2004        # Comparen R1 con b
+    0x1020: JGT    0x1028            # Salto condicional a L1
+    0x1024: JMP    0x104C            # Salto incondicional a L2
+    0x1028: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x102C: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1030: STORE  0x2008, R1        # Almacenen el resultado temporal en t1
+    0x1034: LOAD   R1, 0x2008        # Carguen el valor de t1 en el registro R1
+    0x1038: MUL    R1, #2            # Multipliquen por 2 al registro R1
+    0x103C: STORE  0x200C, R1        # Almacenen el resultado temporal en t2
+    0x1040: LOAD   R1, 0x200C        # Carguen t2 en R1
+    0x1044: STORE  0x3000, R1        # Almacenen en result
+    0x1048: JMP    0x1060            # Salto incondicional a L3
+    0x104C: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x1050: SUB    R1, 0x2004        # Resten el valor de b al registro R1
+    0x1054: STORE  0x2010, R1        # Almacenen el resultado temporal en t3
+    0x1058: LOAD   R1, 0x2010        # Carguen t3 en R1
+    0x105C: STORE  0x3000, R1        # Almacenen en result
+    0x1060: PRINT  0x3000            # Imprimir el valor de result
+    0x1064: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, #14           # Carguen 14 en R1
+    0x1004: STORE  0x2000, R1        # Almacenen en a
+    0x1008: LOAD   R1, #6            # Carguen 6 en R1
+    0x100C: STORE  0x2004, R1        # Almacenen en b
+    0x1010: LOAD   R1, #0            # Carguen 0 en R1
+    0x1014: STORE  0x3000, R1        # Almacenen en result
+    0x1018: LOAD   R1, 0x2000        # Carguen a para comparar
+    0x101C: CMP    R1, 0x2004        # Comparen R1 con b
+    0x1020: JGT    0x1028            # Salto condicional a L1
+    0x1024: JMP    0x103C            # Salto incondicional a L2
+    0x1028: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x102C: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1030: MUL    R1, #2            # Multipliquen por 2 a R1
+    0x1034: STORE  0x3000, R1        # Almacenen el resultado en result
+    0x1038: JMP    0x1048            # Salto incondicional a L3
+    0x103C: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x1040: SUB    R1, 0x2004        # Resten el valor de b al registro R1
+    0x1044: STORE  0x3000, R1        # Almacenen el resultado en result
+    0x1048: PRINT  0x3000            # Imprimir result
+    0x104C: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 26
+    Instrucciones Optimizadas:    20
+    Instrucciones Reducidas:      6
+    Ganancia de Eficiencia:       23.08%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 14              | VARIABLE    |
+| b            | 0x2004      | int      | 6               | VARIABLE    |
+| t1           | 0x2008      | int      | 0               | TEMPORAL    |
+| t2           | 0x200C      | int      | 0               | TEMPORAL    |
+| t3           | 0x2010      | int      | 0               | TEMPORAL    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_05_pipeline_completo.bin (368 bytes)
+    Archivo Desensamblado (.asm): caso_05_pipeline_completo.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    Resultado: EJECUCIÓN FINALIZADA SATISFACTORIAMENTE (HALT alcanzado).
+
+    --- Trazas de Ciclos de Instrucción (Muestra) ---
+      [Ciclo 001 | PC 0x1000] 0x1000: LOAD   R1, #14          -> R1: 14 | R2: 0 | ZF=0 SF=0
+      [Ciclo 002 | PC 0x1004] 0x1004: STORE  0x2000, R1       -> R1: 14 | R2: 0 | ZF=0 SF=0
+      [Ciclo 003 | PC 0x1008] 0x1008: LOAD   R1, #6           -> R1: 6 | R2: 0 | ZF=0 SF=0
+      [Ciclo 004 | PC 0x100C] 0x100C: STORE  0x2004, R1       -> R1: 6 | R2: 0 | ZF=0 SF=0
+      [Ciclo 005 | PC 0x1010] 0x1010: LOAD   R1, #0           -> R1: 0 | R2: 0 | ZF=1 SF=0
+      [Ciclo 006 | PC 0x1014] 0x1014: STORE  0x3000, R1       -> R1: 0 | R2: 0 | ZF=1 SF=0
+      ... [10 ciclos adicionales omitidos para brevedad]
+
+    --- Estado Final del Procesador (CPU) ---
+      REGISTROS: R1: 40 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+      BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+      ESTADO:    PC Final: 0x104C | Ciclos Totales: 16
+
+    --- Volcado Final de Memoria RAM ---
+      +--------------+----------------+----------------+
+      | Dirección    | Variable / Simb | Valor Almacenado |
+      +--------------+----------------+----------------+
+      | 0x2000       | a              | 14             |
+      | 0x2004       | b              | 6              |
+      | 0x3000       | result         | 40             |
+      +--------------+----------------+----------------+
+
+    --- Salida por Consola del Programa ---
+      > 40
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 06 - INVÁLIDO (CASO DE ERROR ESPERADO)]: ERROR DE RESOLUCIÓN: SALTO A ETIQUETA NO DEFINIDA (ERROR_ETIQUETA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Detección y rechazo de saltos incondicionales o condicionales hacia etiquetas inexistentes en el código.
+ [COMPORTAMIENTO ESPERADO]: El asignador de direcciones y la VM interceptan el salto a dirección desconocida 'L_NO_EXISTE' impidiendo una ejecución corrupta.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | t1 = a + b
+    2 | goto L_NO_EXISTE
+    3 | result = t1
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (+, a, b, t1)                    => t1 = a + b
+    Cuádruplo #02: (GOTO, -, -, L_NO_EXISTE)        => goto L_NO_EXISTE
+    Cuádruplo #03: (=, t1, -, result)               => result = t1
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: STORE  0x2008, R1        # Almacenen el resultado temporal en t1
+    0x100C: JMP    L_NO_EXISTE       # Salto incondicional a L_NO_EXISTE
+    0x1010: LOAD   R1, 0x2008        # Carguen t1 en R1
+    0x1014: STORE  0x3000, R1        # Almacenen en result
+    0x1018: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: JMP    L_NO_EXISTE       # Salto incondicional a L_NO_EXISTE
+    0x100C: LOAD   R1, 0x2008        # Carguen t1 en R1
+    0x1010: STORE  0x3000, R1        # Almacenen en result
+    0x1014: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 7
+    Instrucciones Optimizadas:    6
+    Instrucciones Reducidas:      1
+    Ganancia de Eficiencia:       14.29%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 10              | VARIABLE    |
+| b            | 0x2004      | int      | 20              | VARIABLE    |
+| t1           | 0x2008      | int      | 0               | TEMPORAL    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_06_error_etiqueta.bin (159 bytes)
+    Archivo Desensamblado (.asm): caso_06_error_etiqueta.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    🟢 ERROR ESPERADO INTERCEPTADO CORRECTAMENTE POR EL PROCESADOR:
+       Mensaje: Violación de segmento: Dirección de código 0x0000 no contiene una instrucción válida.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 07 - INVÁLIDO (CASO DE ERROR ESPERADO)]: ERROR DE MEMORIA: ACCESO A VARIABLE DESCONOCIDA O NO DECLARADA (ERROR_SIMBOLO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Acceso a identificador no asignado en la tabla de símbolos ni en el segmento de datos.
+ [COMPORTAMIENTO ESPERADO]: La tabla de símbolos y el evaluador de operandos de la VM detectan la variable sin inicializar y notifican error de operando no reconocido.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | t1 = a + variable_fantasma_no_declarada
+    2 | result = t1
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (+, a, variable_fantasma_no_declarada, t1) => t1 = a + variable_fantasma_no_declarada
+    Cuádruplo #02: (=, t1, -, result)               => result = t1
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de variable_fantasma_no_declarada al registro R1
+    0x1008: STORE  0x2008, R1        # Almacenen el resultado temporal en t1
+    0x100C: LOAD   R1, 0x2008        # Carguen t1 en R1
+    0x1010: STORE  0x3000, R1        # Almacenen en result
+    0x1014: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de variable_fantasma_no_declarada al registro R1
+    0x1008: STORE  0x3000, R1        # Almacenen el resultado en result
+    0x100C: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 6
+    Instrucciones Optimizadas:    4
+    Instrucciones Reducidas:      2
+    Ganancia de Eficiencia:       33.33%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 10              | VARIABLE    |
+| variable_fantasma_no_declarada | 0x2004      | int      | 0               | VARIABLE    |
+| t1           | 0x2008      | int      | 0               | TEMPORAL    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_07_error_simbolo.bin (161 bytes)
+    Archivo Desensamblado (.asm): caso_07_error_simbolo.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    🟢 ERROR ESPERADO INTERCEPTADO CORRECTAMENTE POR EL PROCESADOR:
+       Mensaje: None
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 08 - INVÁLIDO (CASO DE ERROR ESPERADO)]: ERROR EN ALU: DIVISIÓN ENTRE CERO EN INSTRUCCIÓN DE MÁQUINA (ERROR_DIVISION_CERO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Detección de división por cero directa en la instrucción de máquina 'DIV Rd, #0'.
+ [COMPORTAMIENTO ESPERADO]: La ALU de la Máquina Virtual intercepta la operación ilegal e interrumpe el procesador reportando ZeroDivisionError.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | t1 = a / 0
+    2 | result = t1
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (/, a, 0, t1)                    => t1 = a / 0
+    Cuádruplo #02: (=, t1, -, result)               => result = t1
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x1004: DIV    R1, #0            # Dividan entre 0 al registro R1
+    0x1008: STORE  0x2004, R1        # Almacenen el resultado temporal en t1
+    0x100C: LOAD   R1, 0x2004        # Carguen t1 en R1
+    0x1010: STORE  0x3000, R1        # Almacenen en result
+    0x1014: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x1004: DIV    R1, #0            # Dividan entre el valor de 0 al registro R1
+    0x1008: STORE  0x3000, R1        # Almacenen el resultado en result
+    0x100C: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 6
+    Instrucciones Optimizadas:    4
+    Instrucciones Reducidas:      2
+    Ganancia de Eficiencia:       33.33%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 50              | VARIABLE    |
+| t1           | 0x2004      | int      | 0               | TEMPORAL    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_08_error_division_cero.bin (121 bytes)
+    Archivo Desensamblado (.asm): caso_08_error_division_cero.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    🟢 ERROR ESPERADO INTERCEPTADO CORRECTAMENTE POR EL PROCESADOR:
+       Mensaje: Error de ejecución en 0x1004 (0x1004: DIV    R1, #0          ): Intento de división por cero en instrucción 0x1004: DIV R1, #0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 09 - INVÁLIDO (CASO DE ERROR ESPERADO)]: VIOLACIÓN DE SEGMENTO: SALTO A DIRECCIÓN FUERA DE MEMORIA (ERROR_SEGMENTACION)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Violación de seguridad de memoria al intentar saltar a una dirección no asignada fuera del segmento 0x1000..0x1FFF.
+ [COMPORTAMIENTO ESPERADO]: El cargador o procesador virtual captura la violación de segmento impidiendo la ejecución en direcciones de memoria prohibidas.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | t1 = a + b
+    2 | goto 0x9999
+    3 | result = t1
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (+, a, b, t1)                    => t1 = a + b
+    Cuádruplo #02: (GOTO, -, -, 0x9999)             => goto 0x9999
+    Cuádruplo #03: (=, t1, -, result)               => result = t1
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: STORE  0x2008, R1        # Almacenen el resultado temporal en t1
+    0x100C: JMP    0x9999            # Salto incondicional a 0x9999
+    0x1010: LOAD   R1, 0x2008        # Carguen t1 en R1
+    0x1014: STORE  0x3000, R1        # Almacenen en result
+    0x1018: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: JMP    0x9999            # Salto incondicional a 0x9999
+    0x100C: LOAD   R1, 0x2008        # Carguen t1 en R1
+    0x1010: STORE  0x3000, R1        # Almacenen en result
+    0x1014: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 7
+    Instrucciones Optimizadas:    6
+    Instrucciones Reducidas:      1
+    Ganancia de Eficiencia:       14.29%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 10              | VARIABLE    |
+| b            | 0x2004      | int      | 10              | VARIABLE    |
+| t1           | 0x2008      | int      | 0               | TEMPORAL    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_09_error_segmentacion.bin (159 bytes)
+    Archivo Desensamblado (.asm): caso_09_error_segmentacion.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    Cargador del SO: Cabecera validada exitosamente. Segmentos cargados en RAM.
+    🟢 ERROR ESPERADO INTERCEPTADO CORRECTAMENTE POR EL PROCESADOR:
+       Mensaje: Violación de segmento: Dirección de código 0x9999 no contiene una instrucción válida.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 10 - INVÁLIDO (CASO DE ERROR ESPERADO)]: FALLO DE INTEGRIDAD: ARCHIVO BINARIO EJECUTABLE CON FIRMA CORRUPTA (ERROR_CABECERA_BINARIA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Verificación de la firma mágica ('MVCO') y checksum en el cargador del sistema operativo.
+ [COMPORTAMIENTO ESPERADO]: El cargador del sistema operativo detecta la alteración de la cabecera o checksum y se rehúsa a ejecutar el binario corrupto.
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO DE ENTRADA]:
+    1 | # Prueba de rechazo de cabecera binaria inválida
+    2 | t1 = a + b
+    3 | result = t1
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [1. CÓDIGO INTERMEDIO (CUÁDRUPLOS / TAC)]:
+    Cuádruplo #01: (+, a, b, t1)                    => t1 = a + b
+    Cuádruplo #02: (=, t1, -, result)               => result = t1
+
+ [2. MAPEO DE INSTRUCCIONES DE MÁQUINA]:
+  --- Código Máquina Estándar (Sin Optimizar) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en el registro R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: STORE  0x2008, R1        # Almacenen el resultado temporal en t1
+    0x100C: LOAD   R1, 0x2008        # Carguen t1 en R1
+    0x1010: STORE  0x3000, R1        # Almacenen en result
+    0x1014: HALT                     # Fin de ejecución
+
+  --- Código Máquina Optimizado (Encadenamiento en Registros / Peephole) ---
+    0x1000: LOAD   R1, 0x2000        # Carguen el valor de a en R1
+    0x1004: ADD    R1, 0x2004        # Sumen el valor de b al registro R1
+    0x1008: STORE  0x3000, R1        # Almacenen el resultado en result
+    0x100C: HALT                     # Fin de ejecución
+
+  [MÉTRICAS DE OPTIMIZACIÓN]:
+    Instrucciones Sin Optimizar: 6
+    Instrucciones Optimizadas:    4
+    Instrucciones Reducidas:      2
+    Ganancia de Eficiencia:       33.33%
+
+ [3. ASIGNACIÓN DE DIRECCIONES Y TABLA DE SÍMBOLOS]:
++--------------+-------------+----------+-----------------+-------------+
+| Símbolo      | Dirección   | Tipo     | Valor Inicial   | Categoría   |
++--------------+-------------+----------+-----------------+-------------+
+| a            | 0x2000      | int      | 10              | VARIABLE    |
+| b            | 0x2004      | int      | 10              | VARIABLE    |
+| t1           | 0x2008      | int      | 0               | TEMPORAL    |
+| result       | 0x3000      | int      | 0               | RESULTADO   |
++--------------+-------------+----------+-----------------+-------------+
+
+ [4. ARCHIVOS EJECUTABLES GENERADOS]:
+    Archivo Binario Ejecutable:   caso_10_error_cabecera_binaria.bin (132 bytes)
+    Archivo Desensamblado (.asm): caso_10_error_cabecera_binaria.asm
+    Cabecera Estándar: Firma MVCO | Entry Point: 0x1000 | Checksum CRC32
+
+ [5. ENTORNO DE EJECUCIÓN (MÁQUINA VIRTUAL)]:
+    🟢 ERROR ESPERADO CAPTURADO CORRECTAMENTE POR EL SISTEMA:
+       Detalle: Firma mágica inválida 'b'CORR''. Archivo ejecutable no reconocido.
+
+==============================================================================================================
+                    RESUMEN GENERAL DE EVALUACIÓN DE CASOS DE PRUEBA
+==============================================================================================================
+  Casos Evaluados:            10
+  Casos Válidos Aprobados:    5 / 5
+  Casos Inválidos Detectados: 5 / 5
+  Tasa de Cumplimiento:       100.0%
+  Estatus de la Rúbrica:      SATISFACTORIO (100 PUNTOS)
+==============================================================================================================
+
+==============================================================================================================
+   EJECUCIÓN DEL GENERADOR DE CÓDIGO FINALIZADA EXITOSAMENTE
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+==============================================================================================================

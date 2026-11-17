@@ -1,0 +1,737 @@
+=========================================================================================================
+   ACTIVIDAD 9: ANÁLISIS SEMÁNTICO Y VERIFICACIÓN DE ESTRUCTURAS DE CONTROL, MÉTODOS Y CLASES
+   MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+   PROFESOR: RIGOBERTO CARDENAS LARIOS
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+=========================================================================================================
+
+Iniciando suite de validación de 20 casos de prueba para el Analizador Semántico...
+Total de casos válidos: 9 | Total de casos inválidos: 11
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 01 - VÁLIDO]: ESTRUCTURA 'IF-ELSE' CON CONDICIÓN BOOLEANA VÁLIDA (Estructuras de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Comprobación de que la condición 'a > b' sea de tipo booleano y que ambas ramas posean bloques adecuadamente cerrados.
+ [COMPORTAMIENTO ESPERADO]: Análisis léxico, sintáctico y semántico exitoso con 0 errores. Árbol AST generado y tabla de símbolos con 'a' y 'b'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int a = 15;
+    2 | int b = 10;
+    3 | if (a > b) {
+    4 |     console.log("a es mayor que b");
+    5 | } else {
+    6 |     console.log("a no es mayor que b");
+    7 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 35 tokens generados.
+    Muestra: int (KEYWORD_INT) | a (IDENTIFICADOR) | = (OP_ASIGNACION) | 15 (NUMERO_ENTERO) | ; (PUNTO_Y_COMA) | int (KEYWORD...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 3)
+        ├── Variable: int a (Con inicializador) (L:1, C:1)
+        │   └── Literal [int]: 15 (L:1)
+        ├── Variable: int b (Con inicializador) (L:2, C:1)
+        │   └── Literal [int]: 10 (L:2)
+        └── Estructura IF (L:3, C:1)
+            ├── Condición:
+            │   └── OpBinaria: '>' (L:3)
+            │       ├── Identificador: 'a' (L:3)
+            │       └── Identificador: 'b' (L:3)
+            ├── Bloque Then (1 sentencias):
+            │   └── LlamadaMétodo: console.log() (Args: 1) (L:4)
+            │       └── Literal [string]: 'a es mayor que b' (L:4)
+            └── Bloque Else (1 sentencias):
+                └── LlamadaMétodo: console.log() (Args: 1) (L:6)
+                    └── Literal [string]: 'a no es mayor que b' (L:6)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (6 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [VARIABLE] a : int (L:1)
+          • [VARIABLE] b : int (L:2)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 02 - VÁLIDO]: BUCLE 'WHILE' CON CONDICIÓN DE SALIDA E INCREMENTO (Estructuras de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Verificación de flujo de control: condición 'contador < 10' booleana y variable de control mutada con 'contador++'.
+ [COMPORTAMIENTO ESPERADO]: Validación correcta con 0 errores; no se cataloga como bucle infinito al mutar la variable de control.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int contador = 0;
+    2 | while (contador < 10) {
+    3 |     console.log(contador);
+    4 |     contador++;
+    5 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 23 tokens generados.
+    Muestra: int (KEYWORD_INT) | contador (IDENTIFICADOR) | = (OP_ASIGNACION) | 0 (NUMERO_ENTERO) | ; (PUNTO_Y_COMA) | while ...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 2)
+        ├── Variable: int contador (Con inicializador) (L:1, C:1)
+        │   └── Literal [int]: 0 (L:1)
+        └── Estructura WHILE (L:2, C:1)
+            ├── Condición:
+            │   └── OpBinaria: '<' (L:2)
+            │       ├── Identificador: 'contador' (L:2)
+            │       └── Literal [int]: 10 (L:2)
+            └── Cuerpo (2 sentencias):
+                ├── LlamadaMétodo: console.log() (Args: 1) (L:3)
+                │   └── Identificador: 'contador' (L:3)
+                └── OpPostfija: contador++ (L:4)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (5 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [VARIABLE] contador : int (L:1)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 03 - VÁLIDO]: DEFINICIÓN Y LLAMADA A MÉTODO CON TIPOS COINCIDENTES (Validación de Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: El método 'sumar' se define con dos parámetros 'int' y retorna 'int'. La llamada pasa dos enteros y asigna a un 'int'.
+ [COMPORTAMIENTO ESPERADO]: Registro del método en tabla de símbolos, aridad correcta (2 == 2), tipos compatibles y 0 errores.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int sumar(int a, int b) {
+    2 |     return a + b;
+    3 | }
+    4 | int resultado = sumar(5, 3);
+    5 | console.log(resultado);
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 33 tokens generados.
+    Muestra: int (KEYWORD_INT) | sumar (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | int (KEYWORD_INT) | a (IDENTIFICADOR) | , (COMA...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 3)
+        ├── Método: int sumar() (L:1, C:1)
+        │   ├── Parámetros (2):
+        │   │   ├── Parámetro: int a
+        │   │   └── Parámetro: int b
+        │   └── Cuerpo (1 sentencias):
+        │       └── Retorno: return (Con valor) (L:2, C:5)
+        │           └── OpBinaria: '+' (L:2)
+        │               ├── Identificador: 'a' (L:2)
+        │               └── Identificador: 'b' (L:2)
+        ├── Variable: int resultado (Con inicializador) (L:4, C:1)
+        │   └── LlamadaMétodo: sumar() (Args: 2) (L:4)
+        │       ├── Literal [int]: 5 (L:4)
+        │       └── Literal [int]: 3 (L:4)
+        └── LlamadaMétodo: console.log() (Args: 1) (L:5)
+            └── Identificador: 'resultado' (L:5)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (6 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [MÉTODO] int sumar(int a, int b) (L:1)
+          • [VARIABLE] resultado : int (L:4)
+    Scope 'Metodo_sumar' (2 símbolos):
+          • [PARÁMETRO] a : int (L:1)
+          • [PARÁMETRO] b : int (L:1)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 04 - VÁLIDO]: MÉTODO CON PARÁMETROS ARITMÉTICOS 'MULTIPLICAR' (Validación de Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Comprobación de llamada a método con 2 argumentos enteros (4, 6) concordantes con la definición formal.
+ [COMPORTAMIENTO ESPERADO]: Resolución del método en el ámbito accesible y retorno de tipo 'int' perfectamente validado.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int multiplicar(int a, int b) {
+    2 |     return a * b;
+    3 | }
+    4 | int producto = multiplicar(4, 6);
+    5 | console.log(producto);
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 33 tokens generados.
+    Muestra: int (KEYWORD_INT) | multiplicar (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | int (KEYWORD_INT) | a (IDENTIFICADOR) | ,...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 3)
+        ├── Método: int multiplicar() (L:1, C:1)
+        │   ├── Parámetros (2):
+        │   │   ├── Parámetro: int a
+        │   │   └── Parámetro: int b
+        │   └── Cuerpo (1 sentencias):
+        │       └── Retorno: return (Con valor) (L:2, C:5)
+        │           └── OpBinaria: '*' (L:2)
+        │               ├── Identificador: 'a' (L:2)
+        │               └── Identificador: 'b' (L:2)
+        ├── Variable: int producto (Con inicializador) (L:4, C:1)
+        │   └── LlamadaMétodo: multiplicar() (Args: 2) (L:4)
+        │       ├── Literal [int]: 4 (L:4)
+        │       └── Literal [int]: 6 (L:4)
+        └── LlamadaMétodo: console.log() (Args: 1) (L:5)
+            └── Identificador: 'producto' (L:5)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (6 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [MÉTODO] int multiplicar(int a, int b) (L:1)
+          • [VARIABLE] producto : int (L:4)
+    Scope 'Metodo_multiplicar' (2 símbolos):
+          • [PARÁMETRO] a : int (L:1)
+          • [PARÁMETRO] b : int (L:1)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 05 - VÁLIDO]: MÉTODO CON TIPO DE RETORNO BOOLEANO 'ESMAYORDEEDAD' (Validación de Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de tipo de retorno: la expresión relacional 'edad >= 18' produce 'boolean', coincidiendo con la signatura.
+ [COMPORTAMIENTO ESPERADO]: Análisis semántico exitoso; tipo de retorno compatible y asignación a variable booleana válida.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | boolean esMayorDeEdad(int edad) {
+    2 |     return edad >= 18;
+    3 | }
+    4 | boolean resultado = esMayorDeEdad(20);
+    5 | console.log(resultado);
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 28 tokens generados.
+    Muestra: boolean (KEYWORD_BOOLEAN) | esMayorDeEdad (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | int (KEYWORD_INT) | edad (IDENT...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 3)
+        ├── Método: boolean esMayorDeEdad() (L:1, C:1)
+        │   ├── Parámetros (1):
+        │   │   └── Parámetro: int edad
+        │   └── Cuerpo (1 sentencias):
+        │       └── Retorno: return (Con valor) (L:2, C:5)
+        │           └── OpBinaria: '>=' (L:2)
+        │               ├── Identificador: 'edad' (L:2)
+        │               └── Literal [int]: 18 (L:2)
+        ├── Variable: boolean resultado (Con inicializador) (L:4, C:1)
+        │   └── LlamadaMétodo: esMayorDeEdad() (Args: 1) (L:4)
+        │       └── Literal [int]: 20 (L:4)
+        └── LlamadaMétodo: console.log() (Args: 1) (L:5)
+            └── Identificador: 'resultado' (L:5)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (6 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [MÉTODO] boolean esMayorDeEdad(int edad) (L:1)
+          • [VARIABLE] resultado : boolean (L:4)
+    Scope 'Metodo_esMayorDeEdad' (1 símbolos):
+          • [PARÁMETRO] edad : int (L:1)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 06 - VÁLIDO]: FUNCIÓN PARA VERIFICACIÓN DE PARIDAD 'ESPAR' (Validación de Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Verificación de operador aritmético módulo ('%') e igualdad relacional ('==') evaluando a tipo 'boolean'.
+ [COMPORTAMIENTO ESPERADO]: Comprobación semántica de tipos en operadores binarios y retorno booleano correcto.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | boolean esPar(int numero) {
+    2 |     return numero % 2 == 0;
+    3 | }
+    4 | boolean resultado = esPar(4);
+    5 | console.log(resultado);
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 30 tokens generados.
+    Muestra: boolean (KEYWORD_BOOLEAN) | esPar (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | int (KEYWORD_INT) | numero (IDENTIFICAD...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 3)
+        ├── Método: boolean esPar() (L:1, C:1)
+        │   ├── Parámetros (1):
+        │   │   └── Parámetro: int numero
+        │   └── Cuerpo (1 sentencias):
+        │       └── Retorno: return (Con valor) (L:2, C:5)
+        │           └── OpBinaria: '==' (L:2)
+        │               ├── OpBinaria: '%' (L:2)
+        │               │   ├── Identificador: 'numero' (L:2)
+        │               │   └── Literal [int]: 2 (L:2)
+        │               └── Literal [int]: 0 (L:2)
+        ├── Variable: boolean resultado (Con inicializador) (L:4, C:1)
+        │   └── LlamadaMétodo: esPar() (Args: 1) (L:4)
+        │       └── Literal [int]: 4 (L:4)
+        └── LlamadaMétodo: console.log() (Args: 1) (L:5)
+            └── Identificador: 'resultado' (L:5)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (6 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [MÉTODO] boolean esPar(int numero) (L:1)
+          • [VARIABLE] resultado : boolean (L:4)
+    Scope 'Metodo_esPar' (1 símbolos):
+          • [PARÁMETRO] numero : int (L:1)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 07 - VÁLIDO]: ESTRUCTURAS DE CONTROL CONDICIONALES ANIDADAS (Estructuras de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de anidamiento de estructuras 'if' internas con ámbitos léxicos jerárquicos independientes.
+ [COMPORTAMIENTO ESPERADO]: Creación jerárquica de bloques en la tabla de símbolos y flujo lógico coherente.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int x = 20;
+    2 | if (x > 10) {
+    3 |     if (x > 15) {
+    4 |         console.log("x es mayor que 15");
+    5 |     }
+    6 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 28 tokens generados.
+    Muestra: int (KEYWORD_INT) | x (IDENTIFICADOR) | = (OP_ASIGNACION) | 20 (NUMERO_ENTERO) | ; (PUNTO_Y_COMA) | if (KEYWORD_...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 2)
+        ├── Variable: int x (Con inicializador) (L:1, C:1)
+        │   └── Literal [int]: 20 (L:1)
+        └── Estructura IF (L:2, C:1)
+            ├── Condición:
+            │   └── OpBinaria: '>' (L:2)
+            │       ├── Identificador: 'x' (L:2)
+            │       └── Literal [int]: 10 (L:2)
+            └── Bloque Then (1 sentencias):
+                └── Estructura IF (L:3, C:5)
+                    ├── Condición:
+                    │   └── OpBinaria: '>' (L:3)
+                    │       ├── Identificador: 'x' (L:3)
+                    │       └── Literal [int]: 15 (L:3)
+                    └── Bloque Then (1 sentencias):
+                        └── LlamadaMétodo: console.log() (Args: 1) (L:4)
+                            └── Literal [string]: 'x es mayor que 15' (L:4)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (5 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [VARIABLE] x : int (L:1)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 08 - VÁLIDO]: MANEJO DE EXCEPCIONES CON BLOQUE 'TRY-CATCH' (Manejo de Excepciones)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Estructura de gestión de excepciones para llamadas con potencial riesgo de división por cero.
+ [COMPORTAMIENTO ESPERADO]: Parseo de bloques 'try' y 'catch', registro de la variable de error y resolución de 'console.log' / 'console.error'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | float dividir(float a, float b) {
+    2 |     return a / b;
+    3 | }
+    4 | try {
+    5 |     float resultado = dividir(10, 2);
+    6 |     console.log(resultado);
+    7 | } catch (error) {
+    8 |     console.error("Error al realizar la division");
+    9 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 49 tokens generados.
+    Muestra: float (KEYWORD_FLOAT) | dividir (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | float (KEYWORD_FLOAT) | a (IDENTIFICADOR)...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 2)
+        ├── Método: float dividir() (L:1, C:1)
+        │   ├── Parámetros (2):
+        │   │   ├── Parámetro: float a
+        │   │   └── Parámetro: float b
+        │   └── Cuerpo (1 sentencias):
+        │       └── Retorno: return (Con valor) (L:2, C:5)
+        │           └── OpBinaria: '/' (L:2)
+        │               ├── Identificador: 'a' (L:2)
+        │               └── Identificador: 'b' (L:2)
+        └── Estructura TRY-CATCH (L:4, C:1)
+            ├── Bloque Try (2 sentencias):
+            │   ├── Variable: float resultado (Con inicializador) (L:5, C:5)
+            │   │   └── LlamadaMétodo: dividir() (Args: 2) (L:5)
+            │   │       ├── Literal [int]: 10 (L:5)
+            │   │       └── Literal [int]: 2 (L:5)
+            │   └── LlamadaMétodo: console.log() (Args: 1) (L:6)
+            │       └── Identificador: 'resultado' (L:6)
+            └── Bloque Catch (Variable: 'error', 1 sentencias):
+                └── LlamadaMétodo: console.error() (Args: 1) (L:8)
+                    └── Literal [string]: 'Error al realizar la division' (L:8)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (5 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [MÉTODO] float dividir(float a, float b) (L:1)
+    Scope 'Metodo_dividir' (2 símbolos):
+          • [PARÁMETRO] a : float (L:1)
+          • [PARÁMETRO] b : float (L:1)
+    Scope 'Bloque_Try' (1 símbolos):
+          • [VARIABLE] resultado : float (L:5)
+    Scope 'Bloque_Catch' (1 símbolos):
+          • [VARIABLE] error : any (L:4)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 09 - VÁLIDO]: DEFINICIÓN DE CLASE ORIENTADA A OBJETOS CON MÉTODOS Y CAMPOS (Clases y Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Declaración formal de clase con atributos de campo, métodos de cálculo y llamada inter-método 'calcularArea()'.
+ [COMPORTAMIENTO ESPERADO]: Registro de 'ClassSymbol', resolución de campos internos y validación completa sin errores.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | class CalculadoraAvanzada {
+    2 |     float base;
+    3 |     float altura;
+    4 | 
+    5 |     float calcularArea() {
+    6 |         return (base * altura) / 2;
+    7 |     }
+    8 | 
+    9 |     boolean esAreaMayor(float limite) {
+   10 |         float area = calcularArea();
+   11 |         if (area > limite) {
+   12 |             return true;
+   13 |         } else {
+   14 |             return false;
+   15 |         }
+   16 |     }
+   17 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 57 tokens generados.
+    Muestra: class (KEYWORD_CLASS) | CalculadoraAvanzada (IDENTIFICADOR) | { (LLAVE_IZQ) | float (KEYWORD_FLOAT) | base (IDEN...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. FASE SINTÁCTICA Y ÁRBOL DE SINTAXIS ABSTRACTA (AST):
+    └── Programa (Declaraciones/Sentencias: 1)
+        └── Clase 'CalculadoraAvanzada' (L:1, C:1)
+            ├── Variable: float base (L:2, C:5)
+            ├── Variable: float altura (L:3, C:5)
+            ├── Método: float calcularArea() (L:5, C:5)
+            │   ├── Parámetros: (Ninguno)
+            │   └── Cuerpo (1 sentencias):
+            │       └── Retorno: return (Con valor) (L:6, C:9)
+            │           └── OpBinaria: '/' (L:6)
+            │               ├── OpBinaria: '*' (L:6)
+            │               │   ├── Identificador: 'base' (L:6)
+            │               │   └── Identificador: 'altura' (L:6)
+            │               └── Literal [int]: 2 (L:6)
+            └── Método: boolean esAreaMayor() (L:9, C:5)
+                ├── Parámetros (1):
+                │   └── Parámetro: float limite
+                └── Cuerpo (2 sentencias):
+                    ├── Variable: float area (Con inicializador) (L:10, C:9)
+                    │   └── LlamadaMétodo: calcularArea() (Args: 0) (L:10)
+                    └── Estructura IF (L:11, C:9)
+                        ├── Condición:
+                        │   └── OpBinaria: '>' (L:11)
+                        │       ├── Identificador: 'area' (L:11)
+                        │       └── Identificador: 'limite' (L:11)
+                        ├── Bloque Then (1 sentencias):
+                        │   └── Retorno: return (Con valor) (L:12, C:13)
+                        │       └── Literal [boolean]: True (L:12)
+                        └── Bloque Else (1 sentencias):
+                            └── Retorno: return (Con valor) (L:14, C:13)
+                                └── Literal [boolean]: False (L:14)
+
+ 3. TABLA DE SÍMBOLOS Y ÁMBITOS GENERADOS:
+    Scope 'Global' (5 símbolos):
+          • [MÉTODO] void print(any msg) (L:1)
+          • [MÉTODO] void println(any msg) (L:1)
+          • [MÉTODO] void console.log(any msg) (L:1)
+          • [MÉTODO] void console.error(any msg) (L:1)
+          • [CLASE] CalculadoraAvanzada (Campos: 2, Métodos: 2)
+    Scope 'Clase_CalculadoraAvanzada' (2 símbolos):
+          • [VARIABLE] base : float (L:2)
+          • [VARIABLE] altura : float (L:3)
+    Scope 'Metodo_esAreaMayor' (2 símbolos):
+          • [PARÁMETRO] limite : float (L:9)
+          • [VARIABLE] area : float (L:10)
+
+  RESULTADO: [CORRECTO / EXITOSO] (0 Errores Semánticos)
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 10 - INVÁLIDO (CASO DE ERROR ESPERADO)]: CONDICIÓN 'IF' INVÁLIDA CON CADENA DE TEXTO ('TEXTO') (Estructuras de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Comprobación de condiciones lógicas: 'texto' es de tipo 'string', lo cual viola la regla booleana en 'if'.
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Semántico: 'La condición en la estructura if debe ser una expresión booleana, se obtuvo string'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | if ("texto") {
+    2 |     console.log("Esto es incorrecto");
+    3 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 13 tokens generados.
+    Muestra: if (KEYWORD_IF) | ( (PARENTESIS_IZQ) | "texto" (LITERAL_CADENA) | ) (PARENTESIS_DER) | { (LLAVE_IZQ) | console (...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SEMÁNTICA - CONDICION_LOGICA_INVALIDA] en Línea  1, Columna  1: La condición en la estructura `if` debe ser una expresión booleana (`boolean`), pero se obtuvo tipo `string`. | Elemento afectado: 'texto'
+       --> Sugerencia de corrección: La condición del 'if' debe evaluar a true o false (ej. una comparación relacional como x > 10).
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 11 - INVÁLIDO (CASO DE ERROR ESPERADO)]: CONDICIÓN 'WHILE' INVÁLIDA CON EXPRESIÓN ENTERA (Estructuras de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Comprobación de condición en bucle iterativo: 'contador + 10' evalúa a 'int', no a 'boolean'.
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Semántico: 'La condición en la estructura while debe ser de tipo boolean, se obtuvo int'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int contador = 5;
+    2 | while (contador + 10) {
+    3 |     console.log("Condicion no booleana");
+    4 |     contador++;
+    5 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 23 tokens generados.
+    Muestra: int (KEYWORD_INT) | contador (IDENTIFICADOR) | = (OP_ASIGNACION) | 5 (NUMERO_ENTERO) | ; (PUNTO_Y_COMA) | while ...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SEMÁNTICA - CONDICION_LOGICA_INVALIDA] en Línea  2, Columna  1: La condición en la estructura `while` debe ser una expresión booleana (`boolean`), pero se obtuvo tipo `int`. | Elemento afectado: 'int'
+       --> Sugerencia de corrección: La condición del ciclo 'while' debe ser de tipo boolean (ej. contador < 10).
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 12 - INVÁLIDO (CASO DE ERROR ESPERADO)]: BUCLE INFINITO TRIVIAL SIN CONDICIÓN DE SALIDA ('WHILE (TRUE)') (Flujo de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de flujo de control: condición constante verdadera sin instrucciones de escape (break/return).
+ [COMPORTAMIENTO ESPERADO]: Detección de Advertencia/Error de Flujo: 'Bucle infinito detectado: condición constante verdadera sin condición de escape'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | while (true) {
+    2 |     console.log("Esto no termina nunca");
+    3 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 13 tokens generados.
+    Muestra: while (KEYWORD_WHILE) | ( (PARENTESIS_IZQ) | true (LITERAL_BOOLEANO) | ) (PARENTESIS_DER) | { (LLAVE_IZQ) | cons...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR FLUJO DE CONTROL - BUCLE_INFINITO] en Línea  1, Columna  1: Bucle infinito detectado: la estructura iterativa posee una condición constante verdadera y no contiene condiciones de salida ni sentencias de escape. | Elemento afectado: 'while (true)'
+       --> Sugerencia de corrección: Incorpore una variable de control que incremente/decremente o una sentencia 'break' / 'return' condicional.
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 13 - INVÁLIDO (CASO DE ERROR ESPERADO)]: LLAMADA A MÉTODO CON NÚMERO INCORRECTO DE ARGUMENTOS (Validación de Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Chequeo de parámetros (Aridad): 'imprimirMensaje' espera 1 argumento y se le suministran 2.
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Semántico: 'Llamada al método imprimirMensaje con 2 argumento(s) en lugar de 1'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | void imprimirMensaje(string mensaje) {
+    2 |     console.log(mensaje);
+    3 | }
+    4 | imprimirMensaje("Hola", "Mundo");
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 22 tokens generados.
+    Muestra: void (KEYWORD_VOID) | imprimirMensaje (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | string (KEYWORD_STRING) | mensaje (...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SEMÁNTICA - NUMERO_ARGUMENTOS_INCORRECTO] en Línea  4, Columna  1: Llamada al método `imprimirMensaje` con 2 argumento(s) en lugar de 1. | Elemento afectado: 'imprimirMensaje'
+       --> Sugerencia de corrección: La función 'imprimirMensaje' espera 1 parámetro(s): (void imprimirMensaje(string mensaje)).
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 14 - INVÁLIDO (CASO DE ERROR ESPERADO)]: LLAMADA A MÉTODO CON TIPO DE ARGUMENTO INCOMPATIBLE (Validación de Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Chequeo de tipos de parámetros: 'dividir' espera 'float' para el segundo parámetro, pero se pasa 'string' ('texto').
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Semántico: 'Llamada incorrecta al método dividir: el argumento 2 esperaba float, se pasó string'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | float dividir(float a, float b) {
+    2 |     return a / b;
+    3 | }
+    4 | float cociente = dividir(10, "texto");
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 26 tokens generados.
+    Muestra: float (KEYWORD_FLOAT) | dividir (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | float (KEYWORD_FLOAT) | a (IDENTIFICADOR)...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SEMÁNTICA - TIPO_PARAMETRO_INCOMPATIBLE] en Línea  4, Columna 18: Llamada incorrecta al método `dividir`: el argumento 2 ('b') esperaba tipo `float`, pero se pasó `string`. | Elemento afectado: 'dividir(arg 2)'
+       --> Sugerencia de corrección: Pase un valor de tipo 'float' para el parámetro 'b'.
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 15 - INVÁLIDO (CASO DE ERROR ESPERADO)]: MÉTODO CON TIPO DE RETORNO INCOMPATIBLE ('OBTENEREDAD') (Validación de Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de tipos de retorno: el método declara retornar 'int', pero la instrucción retorna 'string' ('Veinte').
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Semántico: 'Tipo de retorno incorrecto en el método obtenerEdad: se esperaba int, pero retorna string'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int obtenerEdad() {
+    2 |     return "Veinte";
+    3 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 9 tokens generados.
+    Muestra: int (KEYWORD_INT) | obtenerEdad (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | ) (PARENTESIS_DER) | { (LLAVE_IZQ) | retu...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SEMÁNTICA - TIPO_RETORNO_INCOMPATIBLE] en Línea  2, Columna  5: Tipo de retorno incorrecto en el método `obtenerEdad`: se esperaba `int`, pero retorna `string`. | Elemento afectado: 'obtenerEdad'
+       --> Sugerencia de corrección: Retorne un valor de tipo 'int' o cambie el tipo de retorno declarado.
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 16 - INVÁLIDO (CASO DE ERROR ESPERADO)]: MÉTODO 'VOID' QUE INTENTA RETORNAR UN VALOR (Validación de Métodos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de tipos de retorno: un método declarado como 'void' tiene prohibido retornar expresiones.
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Semántico: 'El método está declarado como void y no puede retornar un valor de tipo int'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | void resetearSistema() {
+    2 |     console.log("Reiniciando...");
+    3 |     return 404;
+    4 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 16 tokens generados.
+    Muestra: void (KEYWORD_VOID) | resetearSistema (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | ) (PARENTESIS_DER) | { (LLAVE_IZQ) ...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SEMÁNTICA - RETORNO_EN_METODO_VOID] en Línea  3, Columna  5: El método `resetearSistema` está declarado como `void` y no puede retornar un valor de tipo `int`. | Elemento afectado: 'resetearSistema'
+       --> Sugerencia de corrección: Elimine el valor retornado o declare un tipo de retorno distinto de void.
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 17 - INVÁLIDO (CASO DE ERROR ESPERADO)]: SENTENCIA 'RETURN' FUERA DE LUGAR (ÁMBITO GLOBAL) (Flujo de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de flujo de control: instrucción 'return' ubicada a nivel global fuera de cualquier método.
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Semántico: 'Sentencia return fuera de lugar: solo está permitida dentro del cuerpo de un método'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int x = 10;
+    2 | return x + 5;
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 10 tokens generados.
+    Muestra: int (KEYWORD_INT) | x (IDENTIFICADOR) | = (OP_ASIGNACION) | 10 (NUMERO_ENTERO) | ; (PUNTO_Y_COMA) | return (KEYW...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SEMÁNTICA - RETURN_FUERA_DE_LUGAR] en Línea  2, Columna  1: Sentencia 'return' fuera de lugar: solo está permitida dentro del cuerpo de un método o función. | Elemento afectado: 'return'
+       --> Sugerencia de corrección: La instrucción 'return' no puede estar fuera del cuerpo de un método.
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 18 - INVÁLIDO (CASO DE ERROR ESPERADO)]: FALTA DE LLAVES DELIMITADORAS EN ESTRUCTURA 'IF' (Estructuras de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Sintaxis de estructuras de control: falta de llaves '{' y '}' en el bloque de código condicional.
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Sintáctico: 'Falta de llave en la estructura if en la línea 2'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int x = 15;
+    2 | if (x > 10)
+    3 |     console.log("x es mayor que 10");
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 18 tokens generados.
+    Muestra: int (KEYWORD_INT) | x (IDENTIFICADOR) | = (OP_ASIGNACION) | 15 (NUMERO_ENTERO) | ; (PUNTO_Y_COMA) | if (KEYWORD_...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SINTÁCTICA - FALTA_DE_LLAVE] en Línea  3, Columna  5: Falta de llave en la estructura `if`. | Elemento afectado: 'console'
+       --> Sugerencia de corrección: Asegúrese de abrir y cerrar el bloque con llaves: if (...) { ... }.
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 19 - INVÁLIDO (CASO DE ERROR ESPERADO)]: CÓDIGO INALCANZABLE TRAS SENTENCIA 'RETURN' INCONDICIONAL (Flujo de Control)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de accesibilidad de flujo: sentencias posteriores a un return incondicional dentro del mismo bloque.
+ [COMPORTAMIENTO ESPERADO]: Detección de Advertencia/Error de Flujo: 'Código inalcanzable (unreachable code) detectado tras sentencia return'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int calcularTotal(int subtotal) {
+    2 |     return subtotal + 10;
+    3 |     int extra = 50;
+    4 |     console.log(extra);
+    5 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 25 tokens generados.
+    Muestra: int (KEYWORD_INT) | calcularTotal (IDENTIFICADOR) | ( (PARENTESIS_IZQ) | int (KEYWORD_INT) | subtotal (IDENTIFIC...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR FLUJO DE CONTROL - CODIGO_INALCANZABLE] en Línea  3, Columna  5: Código inalcanzable (unreachable code) detectado tras una sentencia de escape incondicional ('return').
+       --> Sugerencia de corrección: El código posterior a 'return' nunca se ejecutará.
+    ❌ [02] [ERROR FLUJO DE CONTROL - CODIGO_INALCANZABLE] en Línea  4, Columna  5: Código inalcanzable (unreachable code) detectado tras una sentencia de escape incondicional ('return').
+       --> Sugerencia de corrección: El código posterior a 'return' nunca se ejecutará.
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 20 - INVÁLIDO (CASO DE ERROR ESPERADO)]: USO DE VARIABLE NO DECLARADA EN EXPRESIÓN (Gestión de Ámbitos y Símbolos)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de tabla de símbolos: uso de 'variableInexistente' sin declaración previa en ningún ámbito.
+ [COMPORTAMIENTO ESPERADO]: Detección de Error Semántico: 'Variable variableInexistente no ha sido declarada en el ámbito accesible'.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | int a = 10;
+    2 | int b = variableInexistente * 2;
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 1. FASE LÉXICA: 12 tokens generados.
+    Muestra: int (KEYWORD_INT) | a (IDENTIFICADOR) | = (OP_ASIGNACION) | 10 (NUMERO_ENTERO) | ; (PUNTO_Y_COMA) | int (KEYWORD...
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 2. DIAGNÓSTICO DE ERRORES DETECTADOS (COMPROBACIÓN SEMÁNTICA / SINTÁCTICA):
+    ❌ [01] [ERROR SEMÁNTICA - SIMBOLO_NO_DECLARADO] en Línea  2, Columna  9: Variable `variableInexistente` no ha sido declarada en el ámbito accesible. | Elemento afectado: 'variableInexistente'
+       --> Sugerencia de corrección: Declare 'variableInexistente' antes de usarla en una expresión.
+
+  RESULTADO: [ERROR IDENTIFICADO Y GESTIONADO CORRECTAMENTE]
+  VEREDICTO DE LA RÚBRICA: ✅ PRUEBA SUPERADA CON ÉXITO
+
+=========================================================================================================
+                     RESUMEN GENERAL DE EVALUACIÓN SEMÁNTICA
+=========================================================================================================
+   • Total de Casos de Prueba Ejecutados:  20 / 20
+   • Casos Válidos Aprobados (0 Errores):    9 /  9
+   • Casos Inválidos Diagnosticados:       11 / 11
+   • Tasa de Cumplimiento de la Rúbrica:   100.0%
+   • Ponderación Estimada:                 100 / 100 PUNTOS (SATISFACTORIO)
+=========================================================================================================
+
+=========================================================================================================
+   EJECUCIÓN DEL ANALIZADOR SEMÁNTICO FINALIZADA CON ÉXITO
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+=========================================================================================================
