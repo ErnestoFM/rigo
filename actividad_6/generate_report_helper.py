@@ -174,7 +174,7 @@ def generate_report_docx(console_output: str):
     p_vid.paragraph_format.line_spacing = 1.15
     run_url = p_vid.add_run("URL del Video Demostrativo (YouTube / Enlace Público): ")
     run_url.font.bold = True
-    p_vid.add_run("https://www.youtube.com/watch?v=TU_ENLACE_AQUI\n\n")
+    p_vid.add_run("https://youtu.be/EBAmmASEzPU\n\n")
 
     p_vid_note = p_vid.add_run(
         "Lineamientos cumplidos conforme a la rúbrica oficial de evaluación:\n"

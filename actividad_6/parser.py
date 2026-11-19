@@ -467,17 +467,17 @@ class Parser:
         if tok.type == TokenType.KEYWORD_WHILE:
             return self._parse_while_statement()
 
-        # 6. Declaración de variable local: tipo id ('=' expr)? ';'
-        if self._is_type_specifier(tok):
-            return self._parse_variable_declaration()
-
-        # 7. Asignación o Llamada a Método iniciada con un identificador
+        # 6. Asignación o Llamada a Método iniciada con un identificador
         if tok.type == TokenType.IDENTIFICADOR:
             next_tok = self._peek_token(1)
             if next_tok.type == TokenType.OP_ASIGNACION:
                 return self._parse_assignment_statement()
             elif next_tok.type == TokenType.PARENTESIS_IZQ:
                 return self._parse_call_statement()
+
+        # 7. Declaración de variable local: tipo id ('=' expr)? ';'
+        if self._is_type_specifier(tok):
+            return self._parse_variable_declaration()
 
         # Sentencia no válida
         self.error_handler.report_invalid_statement(
