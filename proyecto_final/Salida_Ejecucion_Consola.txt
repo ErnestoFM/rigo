@@ -1,0 +1,314 @@
+================================================================================
+PROYECTO FINAL: COMPILADOR INTEGRAL DE LENGUAJE C
+MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+PROFESOR: RIGOBERTO CARDENAS LARIOS
+
+INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+1. DIAZ TORRES JAZMIN MONTSERRAT
+2. FIERRO MELÉNDEZ ERNESTO HATUEY
+3. HERNANDEZ GARCIA HECTOR GABRIEL
+4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
+
+INICIANDO BATERÍA DE PRUEBAS AUTOMATIZADAS DEL COMPILADOR INTEGRAL
+Total de casos de prueba: 10 (5 Válidos con ejecución en VM, 5 Inválidos con diagnóstico de errores)
+--------------------------------------------------------------------------------
+
+================================================================================
+CASO DE PRUEBA 01 / 10: [CP01] Expresiones Aritméticas y Variables
+CATEGORÍA: VÁLIDO | FASE OBJETIVO: Completa (Lex -> AST -> Sem -> TAC -> Opt -> ASM -> VM)
+DESCRIPCIÓN: Evalúa precedencia de operadores aritméticos, asignación de variables y salida estándar.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+int a = 15;
+int b = 5;
+int c = 2;
+int resultado = a + b * c - (a / b);
+print(resultado);
+--------------------------------------------------------------------------------
+[FASE 1: LÉXICO] Tokens generados: 36
+[FASE 2: SINTÁCTICO] Nodos en AST generados correctamente.
+[FASE 3: SEMÁNTICO] Variables en tabla de símbolos: 4
+[FASE 4: TAC ORIGINAL] Instrucciones de 3 direcciones: 9
+[FASE 5: TAC OPTIMIZADO] Instrucciones tras optimización: 3
+[FASE 6: GENERADOR CÓDIGO] Instrucciones máquina: 5 (Ahorro: 17 instrs, 77.27%)
+[FASE 7: MÁQUINA VIRTUAL] Salida estándar:
+    > 22
+[ESTADO FINAL REGISTROS Y BANDERAS]:
+REGISTROS: R1: 22 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+ESTADO:    PC Final: 0x1010 | Ciclos Totales: 5
+[MAPA DE MEMORIA RAM FINAL]:
++--------------+------------------+------------------+
+| Dirección    | Variable / Simb  | Valor Almacenado |
++--------------+------------------+------------------+
+| 0x200C       | resultado        | 22               |
+| 0x300C       | t4               | 22               |
++--------------+------------------+------------------+
+VEREDICTO: EXITOSA (COMPILACIÓN Y EJECUCIÓN EN VM) | Esperado: '> 22' | Obtenido: ['> 22']
+
+================================================================================
+CASO DE PRUEBA 02 / 10: [CP02] Estructuras de Control Condicional (If-Else y Switch-Case)
+CATEGORÍA: VÁLIDO | FASE OBJETIVO: Completa (Control de flujo y bifurcaciones condicionales)
+DESCRIPCIÓN: Evalúa estructuras condicionales compuestas if-else y bifurcación selectiva switch-case con break.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+int edad = 20;
+int categoria = 0;
+if (edad >= 18) {
+    categoria = 1;
+} else {
+    categoria = 2;
+}
+
+int bono = 0;
+switch (categoria) {
+    case 1:
+        bono = 500;
+        break;
+    case 2:
+        bono = 100;
+        break;
+    default:
+        bono = 0;
+}
+print(bono);
+--------------------------------------------------------------------------------
+[FASE 1: LÉXICO] Tokens generados: 70
+[FASE 2: SINTÁCTICO] Nodos en AST generados correctamente.
+[FASE 3: SEMÁNTICO] Variables en tabla de símbolos: 3
+[FASE 4: TAC ORIGINAL] Instrucciones de 3 direcciones: 24
+[FASE 5: TAC OPTIMIZADO] Instrucciones tras optimización: 24
+[FASE 6: GENERADOR CÓDIGO] Instrucciones máquina: 32 (Ahorro: 1 instrs, 3.03%)
+[FASE 7: MÁQUINA VIRTUAL] Salida estándar:
+    > 500
+[ESTADO FINAL REGISTROS Y BANDERAS]:
+REGISTROS: R1: 500 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+ESTADO:    PC Final: 0x107C | Ciclos Totales: 20
+[MAPA DE MEMORIA RAM FINAL]:
++--------------+------------------+------------------+
+| Dirección    | Variable / Simb  | Valor Almacenado |
++--------------+------------------+------------------+
+| 0x2000       | edad             | 20               |
+| 0x2004       | categoria        | 1                |
+| 0x2008       | bono             | 500              |
+| 0x3004       | t2               | 1                |
++--------------+------------------+------------------+
+VEREDICTO: EXITOSA (COMPILACIÓN Y EJECUCIÓN EN VM) | Esperado: '> 500' | Obtenido: ['> 500']
+
+================================================================================
+CASO DE PRUEBA 03 / 10: [CP03] Estructuras de Control Iterativas (Bucle While)
+CATEGORÍA: VÁLIDO | FASE OBJETIVO: Completa (Bucles, saltos condicionales e incondicionales)
+DESCRIPCIÓN: Calcula la sumatoria de enteros del 1 al 5 mediante un bucle while interactuando con memoria RAM.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+int contador = 1;
+int acumulador = 0;
+while (contador <= 5) {
+    acumulador = acumulador + contador;
+    contador = contador + 1;
+}
+print(acumulador);
+--------------------------------------------------------------------------------
+[FASE 1: LÉXICO] Tokens generados: 36
+[FASE 2: SINTÁCTICO] Nodos en AST generados correctamente.
+[FASE 3: SEMÁNTICO] Variables en tabla de símbolos: 2
+[FASE 4: TAC ORIGINAL] Instrucciones de 3 direcciones: 12
+[FASE 5: TAC OPTIMIZADO] Instrucciones tras optimización: 12
+[FASE 6: GENERADOR CÓDIGO] Instrucciones máquina: 16 (Ahorro: 4 instrs, 20.0%)
+[FASE 7: MÁQUINA VIRTUAL] Salida estándar:
+    > 15
+[ESTADO FINAL REGISTROS Y BANDERAS]:
+REGISTROS: R1: 6 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+ESTADO:    PC Final: 0x103C | Ciclos Totales: 59
+[MAPA DE MEMORIA RAM FINAL]:
++--------------+------------------+------------------+
+| Dirección    | Variable / Simb  | Valor Almacenado |
++--------------+------------------+------------------+
+| 0x2000       | contador         | 6                |
+| 0x2004       | acumulador       | 15               |
++--------------+------------------+------------------+
+VEREDICTO: EXITOSA (COMPILACIÓN Y EJECUCIÓN EN VM) | Esperado: '> 15' | Obtenido: ['> 15']
+
+================================================================================
+CASO DE PRUEBA 04 / 10: [CP04] Definición e Invocación de Funciones con Parámetros
+CATEGORÍA: VÁLIDO | FASE OBJETIVO: Completa (Subrutinas, call stack, paso de parámetros y retornos)
+DESCRIPCIÓN: Declara una función para calcular el área de un triángulo, pasando argumentos y retornando valor.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+int calcularArea(int base, int altura) {
+    int area = (base * altura) / 2;
+    return area;
+}
+int b = 10;
+int h = 8;
+int res = calcularArea(b, h);
+print(res);
+--------------------------------------------------------------------------------
+[FASE 1: LÉXICO] Tokens generados: 51
+[FASE 2: SINTÁCTICO] Nodos en AST generados correctamente.
+[FASE 3: SEMÁNTICO] Variables en tabla de símbolos: 3
+[FASE 4: TAC ORIGINAL] Instrucciones de 3 direcciones: 16
+[FASE 5: TAC OPTIMIZADO] Instrucciones tras optimización: 15
+[FASE 6: GENERADOR CÓDIGO] Instrucciones máquina: 22 (Ahorro: 4 instrs, 15.38%)
+[FASE 7: MÁQUINA VIRTUAL] Salida estándar:
+    > 40
+[ESTADO FINAL REGISTROS Y BANDERAS]:
+REGISTROS: R1: 40 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+ESTADO:    PC Final: 0x1054 | Ciclos Totales: 22
+[MAPA DE MEMORIA RAM FINAL]:
++--------------+------------------+------------------+
+| Dirección    | Variable / Simb  | Valor Almacenado |
++--------------+------------------+------------------+
+| 0x200C       | b                | 10               |
+| 0x2010       | h                | 8                |
+| 0x2014       | res              | 40               |
+| 0x3000       | base             | 10               |
+| 0x3004       | altura           | 8                |
+| 0x3008       | t1               | 80               |
+| 0x3010       | area             | 40               |
+| 0x3014       | return_value     | 40               |
++--------------+------------------+------------------+
+VEREDICTO: EXITOSA (COMPILACIÓN Y EJECUCIÓN EN VM) | Esperado: '> 40' | Obtenido: ['> 40']
+
+================================================================================
+CASO DE PRUEBA 05 / 10: [CP05] Programación Orientada a Objetos (Clases y Métodos)
+CATEGORÍA: VÁLIDO | FASE OBJETIVO: Completa (Clases, atributos de instancia, métodos y mensajes)
+DESCRIPCIÓN: Declara una clase Banco con atributos y método de depósito, instanciando un objeto e invocándolo.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+class Banco {
+    int saldo;
+    void depositar(int monto) {
+        saldo = saldo + monto;
+        print(saldo);
+    }
+}
+Banco cuenta;
+cuenta.depositar(750);
+--------------------------------------------------------------------------------
+[FASE 1: LÉXICO] Tokens generados: 37
+[FASE 2: SINTÁCTICO] Nodos en AST generados correctamente.
+[FASE 3: SEMÁNTICO] Variables en tabla de símbolos: 1
+[FASE 4: TAC ORIGINAL] Instrucciones de 3 direcciones: 11
+[FASE 5: TAC OPTIMIZADO] Instrucciones tras optimización: 9
+[FASE 6: GENERADOR CÓDIGO] Instrucciones máquina: 10 (Ahorro: 2 instrs, 16.67%)
+[FASE 7: MÁQUINA VIRTUAL] Salida estándar:
+    > 750
+[ESTADO FINAL REGISTROS Y BANDERAS]:
+REGISTROS: R1: 750 | R2: 0 | R3: 0 | R4: 0 | R5: 0 | R6: 0 | R7: 0 | R8: 0
+BANDERAS:  ZF: 0 | SF: 0 | OF: 0
+ESTADO:    PC Final: 0x1024 | Ciclos Totales: 10
+[MAPA DE MEMORIA RAM FINAL]:
++--------------+------------------+------------------+
+| Dirección    | Variable / Simb  | Valor Almacenado |
++--------------+------------------+------------------+
+| 0x3000       | saldo            | 750              |
+| 0x3004       | monto            | 750              |
++--------------+------------------+------------------+
+VEREDICTO: EXITOSA (COMPILACIÓN Y EJECUCIÓN EN VM) | Esperado: '> 750' | Obtenido: ['> 750']
+
+================================================================================
+CASO DE PRUEBA 06 / 10: [CP06] Detección de Error Léxico (Caracteres no reconocidos)
+CATEGORÍA: INVÁLIDO | FASE OBJETIVO: Análisis Léxico
+DESCRIPCIÓN: Contiene caracteres ilegales (@ y #) que no pertenecen al alfabeto del lenguaje C.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+int total = 100;
+int valor = 50 @# 20;
+print(total);
+--------------------------------------------------------------------------------
+FASE DE INTERRUPCIÓN: [LÉXICO]
+ERRORES DIAGNOSTICADOS (2):
+    * [Error Léxico] Línea 2, Columna 16: Carácter no reconocido: '@'. (Cerca de: '@')
+    -> Sugerencia: Elimine el carácter inválido.
+    * [Error Léxico] Línea 2, Columna 17: Carácter no reconocido: '#'. (Cerca de: '#')
+    -> Sugerencia: Elimine el carácter inválido.
+VEREDICTO: DETECCIÓN CORRECTA EN [LÉXICO] | Esperado: Error Léxico
+
+================================================================================
+CASO DE PRUEBA 07 / 10: [CP07] Detección de Error Sintáctico (Paréntesis de condición no cerrado)
+CATEGORÍA: INVÁLIDO | FASE OBJETIVO: Análisis Sintáctico
+DESCRIPCIÓN: Estructura if con condición mal formada por omisión del paréntesis de cierre.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+int a = 10;
+if (a > 5 {
+    print(a);
+}
+--------------------------------------------------------------------------------
+FASE DE INTERRUPCIÓN: [SINTÁCTICO]
+ERRORES DIAGNOSTICADOS (1):
+    * [Error Sintáctico] Línea 2, Columna 11: Se esperaba ')' tras la condición del 'if'. (Cerca de: '{')
+VEREDICTO: DETECCIÓN CORRECTA EN [SINTÁCTICO] | Esperado: Error Sintáctico
+
+================================================================================
+CASO DE PRUEBA 08 / 10: [CP08] Detección de Error Semántico (Incompatibilidad de Tipos)
+CATEGORÍA: INVÁLIDO | FASE OBJETIVO: Análisis Semántico
+DESCRIPCIÓN: Intento de asignar una constante de tipo string a una variable declarada int.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+int numero = "cadena_invalida";
+print(numero);
+--------------------------------------------------------------------------------
+FASE DE INTERRUPCIÓN: [SEMÁNTICO]
+ERRORES DIAGNOSTICADOS (1):
+    * [Error Semántico] Línea 1, Columna 1: Incompatibilidad de tipos en inicialización de 'numero'. Se esperaba 'int' pero se obtuvo 'string'.
+    -> Sugerencia: Asigne un valor de tipo 'int'.
+VEREDICTO: DETECCIÓN CORRECTA EN [SEMÁNTICO] | Esperado: Error Semántico
+
+================================================================================
+CASO DE PRUEBA 09 / 10: [CP09] Detección de Error Semántico (Función No Declarada)
+CATEGORÍA: INVÁLIDO | FASE OBJETIVO: Análisis Semántico
+DESCRIPCIÓN: Invocación a la función 'sumarValores' que no ha sido definida en la tabla de símbolos.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+int a = 10;
+int b = sumarValores(a, 20);
+print(b);
+--------------------------------------------------------------------------------
+FASE DE INTERRUPCIÓN: [SEMÁNTICO]
+ERRORES DIAGNOSTICADOS (1):
+    * [Error Semántico] Línea 2, Columna 9: Llamada a función o método no declarado: 'sumarValores'.
+    -> Sugerencia: Declare la función 'sumarValores' antes de llamarla.
+VEREDICTO: DETECCIÓN CORRECTA EN [SEMÁNTICO] | Esperado: Error Semántico
+
+================================================================================
+CASO DE PRUEBA 10 / 10: [CP10] Detección de Error Semántico en POO (Método Inexistente)
+CATEGORÍA: INVÁLIDO | FASE OBJETIVO: Análisis Semántico
+DESCRIPCIÓN: Llamada al método 'acelerar' sobre un objeto de la clase 'Auto' donde el método no existe.
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE C:
+class Auto {
+    int velocidad;
+}
+Auto miAuto;
+miAuto.acelerar();
+--------------------------------------------------------------------------------
+FASE DE INTERRUPCIÓN: [SEMÁNTICO]
+ERRORES DIAGNOSTICADOS (1):
+    * [Error Semántico] Línea 5, Columna 1: El método 'acelerar' no existe en la clase 'Auto'.
+VEREDICTO: DETECCIÓN CORRECTA EN [SEMÁNTICO] | Esperado: Error Semántico
+
+================================================================================
+RESUMEN GLOBAL DE RESULTADOS DE PRUEBA
+================================================================================
+| ID     | Nombre del Caso                               | Tipo      | Resultado    |
+|--------|-----------------------------------------------|-----------|--------------|
+| CP01   | Expresiones Aritméticas y Variables           | VÁLIDO    | APROBADO     |
+| CP02   | Estructuras de Control Condicional (If-Else y Switch-Case) | VÁLIDO    | APROBADO     |
+| CP03   | Estructuras de Control Iterativas (Bucle While) | VÁLIDO    | APROBADO     |
+| CP04   | Definición e Invocación de Funciones con Parámetros | VÁLIDO    | APROBADO     |
+| CP05   | Programación Orientada a Objetos (Clases y Métodos) | VÁLIDO    | APROBADO     |
+| CP06   | Detección de Error Léxico (Caracteres no reconocidos) | INVÁLIDO  | APROBADO     |
+| CP07   | Detección de Error Sintáctico (Paréntesis de condición no cerrado) | INVÁLIDO  | APROBADO     |
+| CP08   | Detección de Error Semántico (Incompatibilidad de Tipos) | INVÁLIDO  | APROBADO     |
+| CP09   | Detección de Error Semántico (Función No Declarada) | INVÁLIDO  | APROBADO     |
+| CP10   | Detección de Error Semántico en POO (Método Inexistente) | INVÁLIDO  | APROBADO     |
+================================================================================
+RESULTADO FINAL: ¡TODAS LAS PRUEBAS PASARON EXITOSAMENTE (10/10)!
+Bitácora guardada en: c:\Users\erfierro\chingado\rigo\proyecto_final\Salida_Ejecucion_Consola.txt
+================================================================================
