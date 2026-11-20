@@ -353,88 +353,6 @@ class LiteralNode(ASTNode):
         return f"{prefix}{branch}Literal ({self.literal_type}): {self.value} (L:{self.line}, C:{self.column})\n"
 
 
-class ReturnNode(ASTNode):
-    """
-    Sentencia de retorno: 'return' expresion? ';'.
-
-    INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
-    1. DIAZ TORRES JAZMIN MONTSERRAT
-    2. FIERRO MELÉNDEZ ERNESTO HATUEY
-    3. HERNANDEZ GARCIA HECTOR GABRIEL
-    4. MILLAN GUERRERO OSWALDO JOSUE
-    """
-    def __init__(self, value: Optional[ASTNode] = None, line: int = 1, column: int = 1):
-        super().__init__(line, column)
-        self.value = value
-
-    def to_tree_str(self, prefix: str = "", is_last: bool = True) -> str:
-        branch = "└── " if is_last else "├── "
-        res = f"{prefix}{branch}Sentencia 'return' (L:{self.line}, C:{self.column})\n"
-        if self.value:
-            new_prefix = prefix + ("    " if is_last else "│   ")
-            res += self.value.to_tree_str(new_prefix, True)
-        return res
-
-
-class FunctionNode(ASTNode):
-    """
-    Definición de función en C: tipo nombre '(' params ')' '{' bloque '}'
-
-    INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
-    1. DIAZ TORRES JAZMIN MONTSERRAT
-    2. FIERRO MELÉNDEZ ERNESTO HATUEY
-    3. HERNANDEZ GARCIA HECTOR GABRIEL
-    4. MILLAN GUERRERO OSWALDO JOSUE
-    """
-    def __init__(
-        self,
-        return_type: str,
-        name: str,
-        params: List[str],
-        body: BlockNode,
-        line: int = 1,
-        column: int = 1
-    ):
-        super().__init__(line, column)
-        self.return_type = return_type
-        self.name = name
-        self.params = params
-        self.body = body
-
-    def to_tree_str(self, prefix: str = "", is_last: bool = True) -> str:
-        branch = "└── " if is_last else "├── "
-        params_str = ", ".join(self.params) if self.params else "void"
-        res = f"{prefix}{branch}Función '{self.name}' -> {self.return_type}({params_str}) (L:{self.line}, C:{self.column})\n"
-        new_prefix = prefix + ("    " if is_last else "│   ")
-        res += self.body.to_tree_str(new_prefix, True)
-        return res
-
-
-class CallNode(ASTNode):
-    """
-    Llamada a función o expresión de invocación: nombre '(' args ')'.
-
-    INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
-    1. DIAZ TORRES JAZMIN MONTSERRAT
-    2. FIERRO MELÉNDEZ ERNESTO HATUEY
-    3. HERNANDEZ GARCIA HECTOR GABRIEL
-    4. MILLAN GUERRERO OSWALDO JOSUE
-    """
-    def __init__(self, callee: str, args: List[ASTNode], line: int = 1, column: int = 1):
-        super().__init__(line, column)
-        self.callee = callee
-        self.args = args
-
-    def to_tree_str(self, prefix: str = "", is_last: bool = True) -> str:
-        branch = "└── " if is_last else "├── "
-        res = f"{prefix}{branch}Llamada a Función: {self.callee}() (L:{self.line}, C:{self.column})\n"
-        new_prefix = prefix + ("    " if is_last else "│   ")
-        for i, arg in enumerate(self.args):
-            last = (i == len(self.args) - 1)
-            res += arg.to_tree_str(new_prefix, last)
-        return res
-
-
 class ErrorNode(ASTNode):
     """
     Representa un nodo sintáctico con error recuperado.
@@ -452,3 +370,4 @@ class ErrorNode(ASTNode):
     def to_tree_str(self, prefix: str = "", is_last: bool = True) -> str:
         branch = "└── " if is_last else "├── "
         return f"{prefix}{branch}❌ ErrorSintáctico: {self.error_message} (L:{self.line}, C:{self.column})\n"
+
