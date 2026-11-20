@@ -1,0 +1,426 @@
+=========================================================================================================
+   ACTIVIDAD 2: GESTIÓN Y MANEJO DE ERRORES LÉXICOS (COMPILADOR LENGUAJE C EN PYTHON)
+   MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+   PROFESOR: RIGOBERTO CARDENAS LARIOS
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+=========================================================================================================
+
+INICIANDO SUITE DE EVALUACIÓN DE ANÁLISIS Y GESTIÓN DE ERRORES LÉXICOS EN C...
+Total de casos a evaluar: 6 (1 válidos, 5 inválidos).
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🟢 [CASO 01 - VÁLIDO (CASO DE CONTROL)]: CÓDIGO C VÁLIDO (CASO DE CONTROL) (CONTROL_VALIDO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Verificación de directivas de preprocesador, palabras clave, identificadores y literales estándar de C.
+ [COMPORTAMIENTO ESPERADO]: Generación de 100% tokens válidos, 0 errores léxicos reportados y flujo limpio.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | // Caso 1: Codigo C perfectamente valido (Caso de Control)
+    2 | #include <stdio.h>
+    3 | 
+    4 | int main() {
+    5 |     int contador = 10;
+    6 |     float promedio = 9.5f;
+    7 |     printf("El promedio es: %f\n", promedio);
+    8 |     return 0;
+    9 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [TABLA DE COMPONENTES LÉXICOS (TOKENS) GENERADOS]:
++------+-------+------+----------------------------------+------------------------------+
+| #    | LÍNEA | COL  | CATEGORÍA LÉXICA                 | LEXEMA / VALOR               |
++------+-------+------+----------------------------------+------------------------------+
+| 1    | 1     | 1    | Comentario de Línea              | // Caso 1: Codigo C per...   |
+| 2    | 2     | 1    | Directiva de Preprocesador       | #include <stdio.h>           |
+| 3    | 4     | 1    | Palabra Clave (C)                | int                          |
+| 4    | 4     | 5    | Identificador                    | main                         |
+| 5    | 4     | 9    | Delimitador / Símbolo            | (                            |
+| 6    | 4     | 10   | Delimitador / Símbolo            | )                            |
+| 7    | 4     | 12   | Delimitador / Símbolo            | {                            |
+| 8    | 5     | 5    | Palabra Clave (C)                | int                          |
+| 9    | 5     | 9    | Identificador                    | contador                     |
+| 10   | 5     | 18   | Operador de Asignación           | =                            |
+| 11   | 5     | 20   | Literal Entero                   | 10                           |
+| 12   | 5     | 22   | Delimitador / Símbolo            | ;                            |
+| 13   | 6     | 5    | Palabra Clave (C)                | float                        |
+| 14   | 6     | 11   | Identificador                    | promedio                     |
+| 15   | 6     | 20   | Operador de Asignación           | =                            |
+| 16   | 6     | 22   | Literal Flotante                 | 9.5f                         |
+| 17   | 6     | 26   | Delimitador / Símbolo            | ;                            |
+| 18   | 7     | 5    | Identificador                    | printf                       |
+| 19   | 7     | 11   | Delimitador / Símbolo            | (                            |
+| 20   | 7     | 12   | Literal Cadena de Texto          | "El promedio es: %f\n"       |
+| 21   | 7     | 34   | Delimitador / Símbolo            | ,                            |
+| 22   | 7     | 36   | Identificador                    | promedio                     |
+| 23   | 7     | 44   | Delimitador / Símbolo            | )                            |
+| 24   | 7     | 45   | Delimitador / Símbolo            | ;                            |
+| 25   | 8     | 5    | Palabra Clave (C)                | return                       |
+| 26   | 8     | 12   | Literal Entero                   | 0                            |
+| 27   | 8     | 13   | Delimitador / Símbolo            | ;                            |
+| 28   | 9     | 1    | Delimitador / Símbolo            | }                            |
++------+-------+------+----------------------------------+------------------------------+
+ RESUMEN DEL CASO: 28 Tokens Válidos | 0 Errores Léxicos Capturados
+
+ [REPORTE DEL MANEJADOR]: ✅ 0 Errores léxicos. Todos los lexemas pertenecen a C.
+
+ 🟢 RESULTADO: CASO VÁLIDO PROCESADO LIMPIAMENTE (0 ERRORES).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 02 - INVÁLIDO (CASO DE ERROR ESPERADO)]: CARACTERES NO RECONOCIDOS EN C (CARACTER_NO_RECONOCIDO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Detección y aislamiento de símbolos ajenos al juego de caracteres de C ($ , @ , ~ , ¿ , ñ).
+ [COMPORTAMIENTO ESPERADO]: El manejador captura los caracteres no reconocidos indicando línea, columna y sugerencia de eliminación.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | // Caso 2: Prueba de Caracteres No Reconocidos fuera del alfabeto de C (@, $, ~, ¿, ñ)
+    2 | int main() {
+    3 |     int $precio = 50;
+    4 |     char@ simbolo = 'X';
+    5 |     bool ~estado = 0;
+    6 |     printf("Prueba espanol con simbolo no ascii: ¿ y ñ");
+    7 |     return 0;
+    8 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [TABLA DE COMPONENTES LÉXICOS (TOKENS) GENERADOS]:
++------+-------+------+----------------------------------+------------------------------+
+| #    | LÍNEA | COL  | CATEGORÍA LÉXICA                 | LEXEMA / VALOR               |
++------+-------+------+----------------------------------+------------------------------+
+| 1    | 1     | 1    | Comentario de Línea              | // Caso 2: Prueba de Ca...   |
+| 2    | 2     | 1    | Palabra Clave (C)                | int                          |
+| 3    | 2     | 5    | Identificador                    | main                         |
+| 4    | 2     | 9    | Delimitador / Símbolo            | (                            |
+| 5    | 2     | 10   | Delimitador / Símbolo            | )                            |
+| 6    | 2     | 12   | Delimitador / Símbolo            | {                            |
+| 7    | 3     | 5    | Palabra Clave (C)                | int                          |
+| 8    | 3     | 9    | ❌ Error: Carácter No Reconocido  | $                            |
+| 9    | 3     | 10   | Identificador                    | precio                       |
+| 10   | 3     | 17   | Operador de Asignación           | =                            |
+| 11   | 3     | 19   | Literal Entero                   | 50                           |
+| 12   | 3     | 21   | Delimitador / Símbolo            | ;                            |
+| 13   | 4     | 5    | Palabra Clave (C)                | char                         |
+| 14   | 4     | 9    | ❌ Error: Carácter No Reconocido  | @                            |
+| 15   | 4     | 11   | Identificador                    | simbolo                      |
+| 16   | 4     | 19   | Operador de Asignación           | =                            |
+| 17   | 4     | 21   | Literal Carácter                 | 'X'                          |
+| 18   | 4     | 24   | Delimitador / Símbolo            | ;                            |
+| 19   | 5     | 5    | Palabra Clave (C)                | bool                         |
+| 20   | 5     | 10   | Operador a Nivel de Bits         | ~                            |
+| 21   | 5     | 11   | Identificador                    | estado                       |
+| 22   | 5     | 18   | Operador de Asignación           | =                            |
+| 23   | 5     | 20   | Literal Entero                   | 0                            |
+| 24   | 5     | 21   | Delimitador / Símbolo            | ;                            |
+| 25   | 6     | 5    | Identificador                    | printf                       |
+| 26   | 6     | 11   | Delimitador / Símbolo            | (                            |
+| 27   | 6     | 12   | Literal Cadena de Texto          | "Prueba espanol con sim...   |
+| 28   | 6     | 56   | Delimitador / Símbolo            | )                            |
+| 29   | 6     | 57   | Delimitador / Símbolo            | ;                            |
+| 30   | 7     | 5    | Palabra Clave (C)                | return                       |
+| 31   | 7     | 12   | Literal Entero                   | 0                            |
+| 32   | 7     | 13   | Delimitador / Símbolo            | ;                            |
+| 33   | 8     | 1    | Delimitador / Símbolo            | }                            |
++------+-------+------+----------------------------------+------------------------------+
+ RESUMEN DEL CASO: 31 Tokens Válidos | 2 Errores Léxicos Capturados
+
+ [REPORTE DETALLADO DEL MANEJADOR DE ERRORES LÉXICOS]:
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| #    | LÍNEA | COL   | CATEGORÍA DE ERROR           | LEXEMA             | DESCRIPCIÓN Y SUGERENCIA                 |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| 1    | 3     | 9     | Carácter No Reconocido       | $                  | El carácter '$' no pertenece al alf...   |
+| 2    | 4     | 9     | Carácter No Reconocido       | @                  | El carácter '@' no pertenece al alf...   |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES:
+   • Carácter No Reconocido      : 2 ocurrencia(s)
+
+ 🟢 RESULTADO: ERRORES LÉXICOS INTERCEPTADOS Y REPORTADOS SATISFACTORIAMENTE.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 03 - INVÁLIDO (CASO DE ERROR ESPERADO)]: IDENTIFICADORES MAL FORMADOS (IDENTIFICADOR_MAL_FORMADO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Detección de identificadores que inician con números (violación de la regla [a-zA-Z_][a-zA-Z0-9_]*).
+ [COMPORTAMIENTO ESPERADO]: Identificación de '123contador', '8promedio_final', '99suma' con sugerencia de renombrado válido.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | // Caso 3: Prueba de Identificadores Mal Formados (inician con digitos)
+    2 | int main() {
+    3 |     int 123contador = 0;
+    4 |     float 8promedio_final = 10.0;
+    5 |     double 99suma = 55.4;
+    6 |     return 0;
+    7 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [TABLA DE COMPONENTES LÉXICOS (TOKENS) GENERADOS]:
++------+-------+------+----------------------------------+------------------------------+
+| #    | LÍNEA | COL  | CATEGORÍA LÉXICA                 | LEXEMA / VALOR               |
++------+-------+------+----------------------------------+------------------------------+
+| 1    | 1     | 1    | Comentario de Línea              | // Caso 3: Prueba de Id...   |
+| 2    | 2     | 1    | Palabra Clave (C)                | int                          |
+| 3    | 2     | 5    | Identificador                    | main                         |
+| 4    | 2     | 9    | Delimitador / Símbolo            | (                            |
+| 5    | 2     | 10   | Delimitador / Símbolo            | )                            |
+| 6    | 2     | 12   | Delimitador / Símbolo            | {                            |
+| 7    | 3     | 5    | Palabra Clave (C)                | int                          |
+| 8    | 3     | 9    | ❌ Error: Identificador Mal Formado | 123contador                  |
+| 9    | 3     | 21   | Operador de Asignación           | =                            |
+| 10   | 3     | 23   | Literal Entero                   | 0                            |
+| 11   | 3     | 24   | Delimitador / Símbolo            | ;                            |
+| 12   | 4     | 5    | Palabra Clave (C)                | float                        |
+| 13   | 4     | 11   | ❌ Error: Identificador Mal Formado | 8promedio_final              |
+| 14   | 4     | 27   | Operador de Asignación           | =                            |
+| 15   | 4     | 29   | Literal Flotante                 | 10.0                         |
+| 16   | 4     | 33   | Delimitador / Símbolo            | ;                            |
+| 17   | 5     | 5    | Palabra Clave (C)                | double                       |
+| 18   | 5     | 12   | ❌ Error: Identificador Mal Formado | 99suma                       |
+| 19   | 5     | 19   | Operador de Asignación           | =                            |
+| 20   | 5     | 21   | Literal Flotante                 | 55.4                         |
+| 21   | 5     | 25   | Delimitador / Símbolo            | ;                            |
+| 22   | 6     | 5    | Palabra Clave (C)                | return                       |
+| 23   | 6     | 12   | Literal Entero                   | 0                            |
+| 24   | 6     | 13   | Delimitador / Símbolo            | ;                            |
+| 25   | 7     | 1    | Delimitador / Símbolo            | }                            |
++------+-------+------+----------------------------------+------------------------------+
+ RESUMEN DEL CASO: 22 Tokens Válidos | 3 Errores Léxicos Capturados
+
+ [REPORTE DETALLADO DEL MANEJADOR DE ERRORES LÉXICOS]:
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| #    | LÍNEA | COL   | CATEGORÍA DE ERROR           | LEXEMA             | DESCRIPCIÓN Y SUGERENCIA                 |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| 1    | 3     | 9     | Identificador Mal Formado    | 123contador        | Un identificador no puede comenzar ...   |
+| 2    | 4     | 11    | Identificador Mal Formado    | 8promedio_final    | Un identificador no puede comenzar ...   |
+| 3    | 5     | 12    | Identificador Mal Formado    | 99suma             | Un identificador no puede comenzar ...   |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES:
+   • Identificador Mal Formado   : 3 ocurrencia(s)
+
+ 🟢 RESULTADO: ERRORES LÉXICOS INTERCEPTADOS Y REPORTADOS SATISFACTORIAMENTE.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 04 - INVÁLIDO (CASO DE ERROR ESPERADO)]: LITERALES NUMÉRICOS INCORRECTOS (NUMERO_INCORRECTO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Validación de constantes numéricas contra expresiones regulares de números flotantes, hex y científicos.
+ [COMPORTAMIENTO ESPERADO]: Detección de '3.14.15' (múltiples puntos), '0x12G4' (hex inválido) y '1.5e+' (exponente incompleto).
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | // Caso 4: Prueba de Literales Numericos Incorrectos (multiples puntos, hex invalido, expo trunco)
+    2 | int main() {
+    3 |     float pi_invalido = 3.14.15;
+    4 |     int hex_error = 0x12G4;
+    5 |     double expo_incompleto = 1.5e+;
+    6 |     return 0;
+    7 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [TABLA DE COMPONENTES LÉXICOS (TOKENS) GENERADOS]:
++------+-------+------+----------------------------------+------------------------------+
+| #    | LÍNEA | COL  | CATEGORÍA LÉXICA                 | LEXEMA / VALOR               |
++------+-------+------+----------------------------------+------------------------------+
+| 1    | 1     | 1    | Comentario de Línea              | // Caso 4: Prueba de Li...   |
+| 2    | 2     | 1    | Palabra Clave (C)                | int                          |
+| 3    | 2     | 5    | Identificador                    | main                         |
+| 4    | 2     | 9    | Delimitador / Símbolo            | (                            |
+| 5    | 2     | 10   | Delimitador / Símbolo            | )                            |
+| 6    | 2     | 12   | Delimitador / Símbolo            | {                            |
+| 7    | 3     | 5    | Palabra Clave (C)                | float                        |
+| 8    | 3     | 11   | Identificador                    | pi_invalido                  |
+| 9    | 3     | 23   | Operador de Asignación           | =                            |
+| 10   | 3     | 25   | ❌ Error: Literal Numérico Incorrecto | 3.14.15                      |
+| 11   | 3     | 32   | Delimitador / Símbolo            | ;                            |
+| 12   | 4     | 5    | Palabra Clave (C)                | int                          |
+| 13   | 4     | 9    | Identificador                    | hex_error                    |
+| 14   | 4     | 19   | Operador de Asignación           | =                            |
+| 15   | 4     | 21   | ❌ Error: Identificador Mal Formado | 0x12G4                       |
+| 16   | 4     | 27   | Delimitador / Símbolo            | ;                            |
+| 17   | 5     | 5    | Palabra Clave (C)                | double                       |
+| 18   | 5     | 12   | Identificador                    | expo_incompleto              |
+| 19   | 5     | 28   | Operador de Asignación           | =                            |
+| 20   | 5     | 30   | ❌ Error: Literal Numérico Incorrecto | 1.5e+                        |
+| 21   | 5     | 35   | Delimitador / Símbolo            | ;                            |
+| 22   | 6     | 5    | Palabra Clave (C)                | return                       |
+| 23   | 6     | 12   | Literal Entero                   | 0                            |
+| 24   | 6     | 13   | Delimitador / Símbolo            | ;                            |
+| 25   | 7     | 1    | Delimitador / Símbolo            | }                            |
++------+-------+------+----------------------------------+------------------------------+
+ RESUMEN DEL CASO: 22 Tokens Válidos | 3 Errores Léxicos Capturados
+
+ [REPORTE DETALLADO DEL MANEJADOR DE ERRORES LÉXICOS]:
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| #    | LÍNEA | COL   | CATEGORÍA DE ERROR           | LEXEMA             | DESCRIPCIÓN Y SUGERENCIA                 |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| 1    | 3     | 25    | Literal Numérico Incorrecto  | 3.14.15            | Formato de punto flotante inválido:...   |
+| 2    | 4     | 21    | Identificador Mal Formado    | 0x12G4             | Un identificador no puede comenzar ...   |
+| 3    | 5     | 30    | Literal Numérico Incorrecto  | 1.5e+              | Literal numérico en notación cientí...   |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES:
+   • Identificador Mal Formado   : 1 ocurrencia(s)
+   • Literal Numérico Incorrecto : 2 ocurrencia(s)
+
+ 🟢 RESULTADO: ERRORES LÉXICOS INTERCEPTADOS Y REPORTADOS SATISFACTORIAMENTE.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 05 - INVÁLIDO (CASO DE ERROR ESPERADO)]: CADENAS MAL FORMADAS SIN DELIMITADOR (CADENA_MAL_FORMADA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Detección de literales de cadena que no se cierran antes del fin de línea o archivo.
+ [COMPORTAMIENTO ESPERADO]: Aislamiento del lexema no terminado y emisión de advertencia de comilla faltante.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | // Caso 5: Prueba de Cadenas de Texto Mal Formadas (sin comilla de cierre antes del salto de linea)
+    2 | int main() {
+    3 |     char* mensaje = "Esta es una cadena de texto sin comilla de cierre;
+    4 |     printf("Fin del programa\n");
+    5 |     return 0;
+    6 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [TABLA DE COMPONENTES LÉXICOS (TOKENS) GENERADOS]:
++------+-------+------+----------------------------------+------------------------------+
+| #    | LÍNEA | COL  | CATEGORÍA LÉXICA                 | LEXEMA / VALOR               |
++------+-------+------+----------------------------------+------------------------------+
+| 1    | 1     | 1    | Comentario de Línea              | // Caso 5: Prueba de Ca...   |
+| 2    | 2     | 1    | Palabra Clave (C)                | int                          |
+| 3    | 2     | 5    | Identificador                    | main                         |
+| 4    | 2     | 9    | Delimitador / Símbolo            | (                            |
+| 5    | 2     | 10   | Delimitador / Símbolo            | )                            |
+| 6    | 2     | 12   | Delimitador / Símbolo            | {                            |
+| 7    | 3     | 5    | Palabra Clave (C)                | char                         |
+| 8    | 3     | 9    | Operador Aritmético              | *                            |
+| 9    | 3     | 11   | Identificador                    | mensaje                      |
+| 10   | 3     | 19   | Operador de Asignación           | =                            |
+| 11   | 3     | 21   | Literal Cadena de Texto          | "Esta es una cadena de ...   |
+| 12   | 4     | 13   | Identificador                    | Fin                          |
+| 13   | 4     | 17   | Identificador                    | del                          |
+| 14   | 4     | 21   | Identificador                    | programa                     |
+| 15   | 4     | 29   | ❌ Error: Carácter No Reconocido  | \                            |
+| 16   | 4     | 30   | Identificador                    | n                            |
+| 17   | 4     | 31   | ❌ Error: Cadena Mal Formada      | ");                          |
+| 18   | 5     | 5    | Palabra Clave (C)                | return                       |
+| 19   | 5     | 12   | Literal Entero                   | 0                            |
+| 20   | 5     | 13   | Delimitador / Símbolo            | ;                            |
+| 21   | 6     | 1    | Delimitador / Símbolo            | }                            |
++------+-------+------+----------------------------------+------------------------------+
+ RESUMEN DEL CASO: 19 Tokens Válidos | 2 Errores Léxicos Capturados
+
+ [REPORTE DETALLADO DEL MANEJADOR DE ERRORES LÉXICOS]:
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| #    | LÍNEA | COL   | CATEGORÍA DE ERROR           | LEXEMA             | DESCRIPCIÓN Y SUGERENCIA                 |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| 1    | 4     | 29    | Carácter No Reconocido       | \                  | El carácter '\' no pertenece al alf...   |
+| 2    | 4     | 31    | Cadena de Texto Mal Formada  | ");                | Cadena de texto no delimitada: falt...   |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES:
+   • Carácter No Reconocido      : 1 ocurrencia(s)
+   • Cadena de Texto Mal Formada : 1 ocurrencia(s)
+
+ 🟢 RESULTADO: ERRORES LÉXICOS INTERCEPTADOS Y REPORTADOS SATISFACTORIAMENTE.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🔴 [CASO 06 - INVÁLIDO (CASO DE ERROR ESPERADO)]: EVALUACIÓN COMBINADA DE ERRORES LÉXICOS (EVALUACION_INTEGRAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [REGLA EVALUADA]: Evaluación simultánea de las 4 categorías de errores en un solo módulo de código fuente C.
+ [COMPORTAMIENTO ESPERADO]: Reporte exhaustivo y desglose estadístico de todas las incidencias encontradas en la misma corrida.
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+ [CÓDIGO FUENTE DE ENTRADA]:
+    1 | // Caso 6: Programa C completo con fallas lexicas combinadas
+    2 | int main() {
+    3 |     int 123contador = 10;                     // Error: Identificador mal formado
+    4 |     float precio_multiple = 99.99.5;          // Error: Numero con multiples puntos decimales
+    5 |     int mascara_hex = 0x55ZZ;                  // Error: Hexadecimal con digitos no validos
+    6 |     char$ token_simbolo = 'A';                 // Error: Caracter no reconocido '$'
+    7 |     char* mensaje = "Cadena que nunca se cerro; // Error: Cadena mal formada sin comilla
+    8 |     return 0;
+    9 | }
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ [TABLA DE COMPONENTES LÉXICOS (TOKENS) GENERADOS]:
++------+-------+------+----------------------------------+------------------------------+
+| #    | LÍNEA | COL  | CATEGORÍA LÉXICA                 | LEXEMA / VALOR               |
++------+-------+------+----------------------------------+------------------------------+
+| 1    | 1     | 1    | Comentario de Línea              | // Caso 6: Programa C c...   |
+| 2    | 2     | 1    | Palabra Clave (C)                | int                          |
+| 3    | 2     | 5    | Identificador                    | main                         |
+| 4    | 2     | 9    | Delimitador / Símbolo            | (                            |
+| 5    | 2     | 10   | Delimitador / Símbolo            | )                            |
+| 6    | 2     | 12   | Delimitador / Símbolo            | {                            |
+| 7    | 3     | 5    | Palabra Clave (C)                | int                          |
+| 8    | 3     | 9    | ❌ Error: Identificador Mal Formado | 123contador                  |
+| 9    | 3     | 21   | Operador de Asignación           | =                            |
+| 10   | 3     | 23   | Literal Entero                   | 10                           |
+| 11   | 3     | 25   | Delimitador / Símbolo            | ;                            |
+| 12   | 3     | 47   | Comentario de Línea              | // Error: Identificador...   |
+| 13   | 4     | 5    | Palabra Clave (C)                | float                        |
+| 14   | 4     | 11   | Identificador                    | precio_multiple              |
+| 15   | 4     | 27   | Operador de Asignación           | =                            |
+| 16   | 4     | 29   | ❌ Error: Literal Numérico Incorrecto | 99.99.5                      |
+| 17   | 4     | 36   | Delimitador / Símbolo            | ;                            |
+| 18   | 4     | 47   | Comentario de Línea              | // Error: Numero con mu...   |
+| 19   | 5     | 5    | Palabra Clave (C)                | int                          |
+| 20   | 5     | 9    | Identificador                    | mascara_hex                  |
+| 21   | 5     | 21   | Operador de Asignación           | =                            |
+| 22   | 5     | 23   | ❌ Error: Identificador Mal Formado | 0x55ZZ                       |
+| 23   | 5     | 29   | Delimitador / Símbolo            | ;                            |
+| 24   | 5     | 48   | Comentario de Línea              | // Error: Hexadecimal c...   |
+| 25   | 6     | 5    | Palabra Clave (C)                | char                         |
+| 26   | 6     | 9    | ❌ Error: Carácter No Reconocido  | $                            |
+| 27   | 6     | 11   | Identificador                    | token_simbolo                |
+| 28   | 6     | 25   | Operador de Asignación           | =                            |
+| 29   | 6     | 27   | Literal Carácter                 | 'A'                          |
+| 30   | 6     | 30   | Delimitador / Símbolo            | ;                            |
+| 31   | 6     | 48   | Comentario de Línea              | // Error: Caracter no r...   |
+| 32   | 7     | 5    | Palabra Clave (C)                | char                         |
+| 33   | 7     | 9    | Operador Aritmético              | *                            |
+| 34   | 7     | 11   | Identificador                    | mensaje                      |
+| 35   | 7     | 19   | Operador de Asignación           | =                            |
+| 36   | 7     | 21   | ❌ Error: Cadena Mal Formada      | "Cadena que nunca se ce...   |
+| 37   | 8     | 5    | Palabra Clave (C)                | return                       |
+| 38   | 8     | 12   | Literal Entero                   | 0                            |
+| 39   | 8     | 13   | Delimitador / Símbolo            | ;                            |
+| 40   | 9     | 1    | Delimitador / Símbolo            | }                            |
++------+-------+------+----------------------------------+------------------------------+
+ RESUMEN DEL CASO: 35 Tokens Válidos | 5 Errores Léxicos Capturados
+
+ [REPORTE DETALLADO DEL MANEJADOR DE ERRORES LÉXICOS]:
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| #    | LÍNEA | COL   | CATEGORÍA DE ERROR           | LEXEMA             | DESCRIPCIÓN Y SUGERENCIA                 |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+| 1    | 3     | 9     | Identificador Mal Formado    | 123contador        | Un identificador no puede comenzar ...   |
+| 2    | 4     | 29    | Literal Numérico Incorrecto  | 99.99.5            | Formato de punto flotante inválido:...   |
+| 3    | 5     | 23    | Identificador Mal Formado    | 0x55ZZ             | Un identificador no puede comenzar ...   |
+| 4    | 6     | 9     | Carácter No Reconocido       | $                  | El carácter '$' no pertenece al alf...   |
+| 5    | 7     | 21    | Cadena de Texto Mal Formada  | "Cadena que n...   | Cadena de texto no delimitada: falt...   |
++------+-------+-------+------------------------------+--------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES:
+   • Carácter No Reconocido      : 1 ocurrencia(s)
+   • Identificador Mal Formado   : 2 ocurrencia(s)
+   • Literal Numérico Incorrecto : 1 ocurrencia(s)
+   • Cadena de Texto Mal Formada : 1 ocurrencia(s)
+
+ 🟢 RESULTADO: ERRORES LÉXICOS INTERCEPTADOS Y REPORTADOS SATISFACTORIAMENTE.
+
+=========================================================================================================
+                    RESUMEN GENERAL DE EVALUACIÓN DE CASOS DE PRUEBA LÉXICOS
+=========================================================================================================
+  Casos Evaluados:            6
+  Casos Válidos Aprobados:    1 / 1 (0 Errores)
+  Casos Inválidos Detectados: 5 / 5 (100% Interceptados)
+  Tasa de Cumplimiento:       100.0%
+  Estatus de la Rúbrica:      SATISFACTORIO (100 PUNTOS)
+=========================================================================================================
+
+=========================================================================================================
+   EJECUCIÓN Y VALIDACIÓN DE ERRORES LÉXICOS FINALIZADA EXITOSAMENTE
+   INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+     1. DIAZ TORRES JAZMIN MONTSERRAT
+     2. FIERRO MELÉNDEZ ERNESTO HATUEY
+     3. HERNANDEZ GARCIA HECTOR GABRIEL
+     4. MILLAN GUERRERO OSWALDO JOSUE
+=========================================================================================================
