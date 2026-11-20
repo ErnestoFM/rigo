@@ -71,16 +71,28 @@ Total de casos a evaluar: 16 (6 válidos, 10 inválidos)
 ----------------------------------------------------------------------------------------------------
  [TOKENS GENERADOS (40)]: class (KEYWORD_CLASS) | Rectangulo (IDENTIFICADOR) | { (LLAVE_IZQ) | float (KEYWORD_FLOAT) | base (IDENTIFICADOR) | ;...
 ----------------------------------------------------------------------------------------------------
-  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (2 Error(es) Encontrado(s))
-  TABLA DE DIAGNÓSTICO DETALLADO:
-    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
-    ----------------------------------------------------------------------------------------------
-    1   | L:10   | C:14     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
-        └─> Sugerencia: Se esperaba identificador después del tipo 'base', pero se encontró '='.
-        └─> Token del conflicto: '='
-    2   | L:11   | C:16     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
-        └─> Sugerencia: Se esperaba identificador después del tipo 'altura', pero se encontró '='.
-        └─> Token del conflicto: '='
+  ESTADO SINTÁCTICO: [CORRECTO / EXITOSO] (0 Errores)
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+    └── Programa (Declaraciones: 1)
+        └── Clase 'Rectangulo' (L:1, C:1)
+            ├── Variable: float base (L:2, C:5)
+            ├── Variable: float altura (L:3, C:5)
+            ├── Método: float calcularArea() (L:5, C:5)
+            │   ├── Parámetros: (Ninguno)
+            │   └── Cuerpo (1 sentencias):
+            │       └── Retorno: return (Con valor)
+            │           └── OpBinaria: '*'
+            │               ├── ID: base
+            │               └── ID: altura
+            └── Método: void setDimensiones() (L:9, C:5)
+                ├── Parámetros (2):
+                │   ├── Parámetro: float b
+                │   └── Parámetro: float h
+                └── Cuerpo (2 sentencias):
+                    ├── Asignación: base =
+                    │   └── ID: b
+                    └── Asignación: altura =
+                        └── ID: h
 ----------------------------------------------------------------------------------------------------
 
 ####################################################################################################
@@ -110,16 +122,36 @@ Total de casos a evaluar: 16 (6 válidos, 10 inválidos)
 ----------------------------------------------------------------------------------------------------
  [TOKENS GENERADOS (53)]: class (KEYWORD_CLASS) | Punto (IDENTIFICADOR) | { (LLAVE_IZQ) | int (KEYWORD_INT) | x (IDENTIFICADOR) | ; (PUNTO_Y_CO...
 ----------------------------------------------------------------------------------------------------
-  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (2 Error(es) Encontrado(s))
-  TABLA DE DIAGNÓSTICO DETALLADO:
-    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
-    ----------------------------------------------------------------------------------------------
-    1   | L:6    | C:11     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
-        └─> Sugerencia: Se esperaba identificador después del tipo 'x', pero se encontró '='.
-        └─> Token del conflicto: '='
-    2   | L:7    | C:11     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
-        └─> Sugerencia: Se esperaba identificador después del tipo 'y', pero se encontró '='.
-        └─> Token del conflicto: '='
+  ESTADO SINTÁCTICO: [CORRECTO / EXITOSO] (0 Errores)
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+    └── Programa (Declaraciones: 2)
+        ├── Clase 'Punto' (L:1, C:1)
+        │   ├── Variable: int x (L:2, C:5)
+        │   ├── Variable: int y (L:3, C:5)
+        │   └── Método: void mover() (L:5, C:5)
+        │       ├── Parámetros (2):
+        │       │   ├── Parámetro: int dx
+        │       │   └── Parámetro: int dy
+        │       └── Cuerpo (2 sentencias):
+        │           ├── Asignación: x =
+        │           │   └── OpBinaria: '+'
+        │           │       ├── ID: x
+        │           │       └── ID: dx
+        │           └── Asignación: y =
+        │               └── OpBinaria: '+'
+        │                   ├── ID: y
+        │                   └── ID: dy
+        └── Clase 'Circulo' (L:11, C:1)
+            ├── Variable: float radio (L:12, C:5)
+            └── Método: float calcularArea() (L:14, C:5)
+                ├── Parámetros: (Ninguno)
+                └── Cuerpo (1 sentencias):
+                    └── Retorno: return (Con valor)
+                        └── OpBinaria: '*'
+                            ├── OpBinaria: '*'
+                            │   ├── Literal (NUMERO_FLOTANTE): 3.1416
+                            │   └── ID: radio
+                            └── ID: radio
 ----------------------------------------------------------------------------------------------------
 
 ####################################################################################################
@@ -151,16 +183,50 @@ Total de casos a evaluar: 16 (6 válidos, 10 inválidos)
 ----------------------------------------------------------------------------------------------------
  [TOKENS GENERADOS (73)]: class (KEYWORD_CLASS) | Validador (IDENTIFICADOR) | { (LLAVE_IZQ) | boolean (KEYWORD_BOOLEAN) | esMayor (IDENTIFICADO...
 ----------------------------------------------------------------------------------------------------
-  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (2 Error(es) Encontrado(s))
-  TABLA DE DIAGNÓSTICO DETALLADO:
-    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
-    ----------------------------------------------------------------------------------------------
-    1   | L:14   | C:19     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
-        └─> Sugerencia: Se esperaba identificador después del tipo 'total', pero se encontró '='.
-        └─> Token del conflicto: '='
-    2   | L:15   | C:15     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
-        └─> Sugerencia: Se esperaba identificador después del tipo 'i', pero se encontró '='.
-        └─> Token del conflicto: '='
+  ESTADO SINTÁCTICO: [CORRECTO / EXITOSO] (0 Errores)
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+    └── Programa (Declaraciones: 1)
+        └── Clase 'Validador' (L:1, C:1)
+            ├── Método: boolean esMayor() (L:2, C:5)
+            │   ├── Parámetros (2):
+            │   │   ├── Parámetro: int edad
+            │   │   └── Parámetro: int limite
+            │   └── Cuerpo (1 sentencias):
+            │       └── Sentencia IF (L:3, C:9)
+            │           ├── Condición:
+            │           │   └── OpBinaria: '>='
+            │           │       ├── ID: edad
+            │           │       └── ID: limite
+            │           ├── Bloque Then (1 sentencias):
+            │           │   └── Retorno: return (Con valor)
+            │           │       └── Literal (LITERAL_BOOLEANO): true
+            │           └── Bloque Else (1 sentencias):
+            │               └── Retorno: return (Con valor)
+            │                   └── Literal (LITERAL_BOOLEANO): false
+            └── Método: int sumarSecuencia() (L:10, C:5)
+                ├── Parámetros (1):
+                │   └── Parámetro: int n
+                └── Cuerpo (4 sentencias):
+                    ├── Variable: int total (Con inicializador) (L:11, C:9)
+                    │   └── Literal (NUMERO_ENTERO): 0
+                    ├── Variable: int i (Con inicializador) (L:12, C:9)
+                    │   └── Literal (NUMERO_ENTERO): 1
+                    ├── Ciclo WHILE (L:13, C:9)
+                    │   ├── Condición:
+                    │   │   └── OpBinaria: '<='
+                    │   │       ├── ID: i
+                    │   │       └── ID: n
+                    │   └── Cuerpo (2 sentencias):
+                    │       ├── Asignación: total =
+                    │       │   └── OpBinaria: '+'
+                    │       │       ├── ID: total
+                    │       │       └── ID: i
+                    │       └── Asignación: i =
+                    │           └── OpBinaria: '+'
+                    │               ├── ID: i
+                    │               └── Literal (NUMERO_ENTERO): 1
+                    └── Retorno: return (Con valor)
+                        └── ID: total
 ----------------------------------------------------------------------------------------------------
 
 ####################################################################################################
@@ -184,13 +250,22 @@ Total de casos a evaluar: 16 (6 válidos, 10 inválidos)
 ----------------------------------------------------------------------------------------------------
  [TOKENS GENERADOS (28)]: class (KEYWORD_CLASS) | GestorEstudiante (IDENTIFICADOR) | { (LLAVE_IZQ) | Persona (IDENTIFICADOR) | estudiante (IDEN...
 ----------------------------------------------------------------------------------------------------
-  ESTADO SINTÁCTICO: [ERROR SINTÁCTICO DETECTADO] (1 Error(es) Encontrado(s))
-  TABLA DE DIAGNÓSTICO DETALLADO:
-    #   | LÍNEA  | COLUMNA  | CATEGORÍA                  | DESCRIPCIÓN / SUGERENCIA
-    ----------------------------------------------------------------------------------------------
-    1   | L:9    | C:20     | SENTENCIA_INVALIDA         | Sentencia inválida en el cuerpo del método
-        └─> Sugerencia: Se esperaba identificador después del tipo 'estudiante', pero se encontró '='.
-        └─> Token del conflicto: '='
+  ESTADO SINTÁCTICO: [CORRECTO / EXITOSO] (0 Errores)
+  ÁRBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+    └── Programa (Declaraciones: 1)
+        └── Clase 'GestorEstudiante' (L:1, C:1)
+            ├── Variable: Persona estudiante (L:2, C:5)
+            ├── Método: Persona obtenerEstudiante() (L:4, C:5)
+            │   ├── Parámetros: (Ninguno)
+            │   └── Cuerpo (1 sentencias):
+            │       └── Retorno: return (Con valor)
+            │           └── ID: estudiante
+            └── Método: void asignarEstudiante() (L:8, C:5)
+                ├── Parámetros (1):
+                │   └── Parámetro: Persona p
+                └── Cuerpo (1 sentencias):
+                    └── Asignación: estudiante =
+                        └── ID: p
 ----------------------------------------------------------------------------------------------------
 
 ####################################################################################################
