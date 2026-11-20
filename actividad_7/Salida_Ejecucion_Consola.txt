@@ -1,0 +1,451 @@
+================================================================================
+ CENTRO UNIVERSITARIO DE CIENCIAS EXACTAS E INGENIERIAS
+ DIVISION DE ELECTRONICA Y COMPUTACION
+ DEPARTAMENTO DE CIENCIAS COMPUTACIONALES
+ MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+ PROFESOR: RIGOBERTO CARDENAS LARIOS
+ ACTIVIDAD 7: ANALISIS SEMANTICO - TABLA DE SIMBOLOS Y TIPOS DE DATOS
+ INTEGRANTES DEL EQUIPO (ORDEN ALFABETICO POR PRIMER APELLIDO):
+   1. DIAZ TORRES JAZMIN MONTSERRAT
+   2. FIERRO MELENDEZ ERNESTO HATUEY
+   3. HERNANDEZ GARCIA HECTOR GABRIEL
+   4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
+
+Iniciando Bateria de Pruebas del Analizador Semantico (10 casos en total)...
+
+--------------------------------------------------------------------------------
+TEST #01: Asignación y Operaciones Válidas de Mismo Tipo (int) [CASO VALIDO]
+Categoria: Verificación de Tipos Válida (Rúbrica)
+Comportamiento Esperado: Inserción y actualización exitosa de 'a', 'b', 'c' como int en la tabla de símbolos global sin errores de tipos.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | int a;
+   2 | a = 5;
+   3 | int b = 10;
+   4 | int c = a + b;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SEMANTICOS)
+
+TABLA DE SIMBOLOS GENERADA:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | a                | int      | global   | global         | 0     | 5              | L:1, C:1  |
+| 2   | b                | int      | global   | global         | 0     | 10             | L:3, C:1  |
+| 3   | c                | int      | global   | global         | 0     | 15             | L:4, C:1  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 3 | Variables Globales = 3 | Variables Locales = 0
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) ANOTADO CON TIPOS:
+└── Programa (4 declaraciones/sentencias)
+    ├── Declaración: int a [Tipo: int] (L:1, C:1)
+    ├── Asignación: a = [Tipo: int] (L:3, C:1)
+    │   └── Literal (int): 5 (L:2, C:5)
+    ├── Declaración: int b (Con inicializador) [Tipo: int] (L:3, C:1)
+    │   └── Literal (int): 10 (L:3, C:9)
+    └── Declaración: int c (Con inicializador) [Tipo: int] (L:4, C:1)
+        └── Op Binaria '+' [Tipo: int] (L:4, C:9)
+            ├── Identificador: a [Tipo: int] (L:4, C:9)
+            └── Identificador: b [Tipo: int] (L:4, C:13)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #1: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #02: Gestión de Ámbito Global y Local en Función (Ejemplo Rúbrica) [CASO VALIDO]
+Categoria: Gestión de Ámbito Válida (Rúbrica)
+Comportamiento Esperado: Acceso válido a 'variable_global' desde la función y uso de 'variable_local' restringido al ámbito local de 'miFuncion'.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | int variable_global;
+   2 | void miFuncion() {
+   3 |     int variable_local;
+   4 |     variable_global = 5;
+   5 |     variable_local = 10;
+   6 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SEMANTICOS)
+
+TABLA DE SIMBOLOS GENERADA:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | variable_global  | int      | global   | global         | 0     | 5              | L:1, C:1  |
+| 2   | miFuncion        | void     | global   | global         | 0     | func_miFuncion | L:2, C:1  |
+| 3   | variable_local   | int      | local    | miFuncion      | 1     | 10             | L:3, C:5  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 3 | Variables Globales = 2 | Variables Locales = 1
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) ANOTADO CON TIPOS:
+└── Programa (2 declaraciones/sentencias)
+    ├── Declaración: int variable_global [Tipo: int] (L:1, C:1)
+    └── Función 'miFuncion' -> void(void) (L:2, C:1)
+        └── Bloque {...} (3 sentencias)
+            ├── Declaración: int variable_local [Tipo: int] (L:3, C:5)
+            ├── Asignación: variable_global = [Tipo: int] (L:5, C:5)
+            │   └── Literal (int): 5 (L:4, C:23)
+            └── Asignación: variable_local = [Tipo: int] (L:6, C:1)
+                └── Literal (int): 10 (L:5, C:22)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #2: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #03: Tipos Flotantes y Caracteres con Operaciones Válidas [CASO VALIDO]
+Categoria: Tipos de Datos Primitivos Válidos
+Comportamiento Esperado: Registro correcto de variables de tipo 'float' y 'char' en la tabla de símbolos con operaciones homogéneas.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | float pi = 3.14;
+   2 | float radio = 2.5;
+   3 | float area = pi * radio;
+   4 | char letra = 'A';
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SEMANTICOS)
+
+TABLA DE SIMBOLOS GENERADA:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | pi               | float    | global   | global         | 0     | 3.14           | L:1, C:1  |
+| 2   | radio            | float    | global   | global         | 0     | 2.5            | L:2, C:1  |
+| 3   | area             | float    | global   | global         | 0     | 7.850000000... | L:3, C:1  |
+| 4   | letra            | char     | global   | global         | 0     | A              | L:4, C:1  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 4 | Variables Globales = 4 | Variables Locales = 0
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) ANOTADO CON TIPOS:
+└── Programa (4 declaraciones/sentencias)
+    ├── Declaración: float pi (Con inicializador) [Tipo: float] (L:1, C:1)
+    │   └── Literal (float): 3.14 (L:1, C:12)
+    ├── Declaración: float radio (Con inicializador) [Tipo: float] (L:2, C:1)
+    │   └── Literal (float): 2.5 (L:2, C:15)
+    ├── Declaración: float area (Con inicializador) [Tipo: float] (L:3, C:1)
+    │   └── Op Binaria '*' [Tipo: float] (L:3, C:14)
+    │       ├── Identificador: pi [Tipo: float] (L:3, C:14)
+    │       └── Identificador: radio [Tipo: float] (L:3, C:19)
+    └── Declaración: char letra (Con inicializador) [Tipo: char] (L:4, C:1)
+        └── Literal (char): A (L:4, C:14)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #3: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #04: Enmascaramiento de Variable Global por Ámbito Local (Shadowing) [CASO VALIDO]
+Categoria: Resolución de Ámbitos Jerárquicos
+Comportamiento Esperado: La variable local 'total' enmascara válidamente a la global en 'procesar' sin generar colisión ni error.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | int total = 100;
+   2 | void procesar() {
+   3 |     int total = 50;
+   4 |     total = total + 10;
+   5 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SEMANTICOS)
+
+TABLA DE SIMBOLOS GENERADA:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | total            | int      | global   | global         | 0     | 100            | L:1, C:1  |
+| 2   | procesar         | void     | global   | global         | 0     | func_procesar  | L:2, C:1  |
+| 3   | total            | int      | local    | procesar       | 1     | 60             | L:3, C:5  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 3 | Variables Globales = 2 | Variables Locales = 1
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) ANOTADO CON TIPOS:
+└── Programa (2 declaraciones/sentencias)
+    ├── Declaración: int total (Con inicializador) [Tipo: int] (L:1, C:1)
+    │   └── Literal (int): 100 (L:1, C:13)
+    └── Función 'procesar' -> void(void) (L:2, C:1)
+        └── Bloque {...} (2 sentencias)
+            ├── Declaración: int total (Con inicializador) [Tipo: int] (L:3, C:5)
+            │   └── Literal (int): 50 (L:3, C:17)
+            └── Asignación: total = [Tipo: int] (L:5, C:1)
+                └── Op Binaria '+' [Tipo: int] (L:4, C:13)
+                    ├── Identificador: total [Tipo: int] (L:4, C:13)
+                    └── Literal (int): 10 (L:4, C:21)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #4: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #05: Control de Flujo con Tipos y Variables Coherentes [CASO VALIDO]
+Categoria: Estructuras de Control y Expresiones Válidas
+Comportamiento Esperado: Evaluación semántica exitosa de expresiones relacionales y aritméticas entre variables int declaradas.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | int contador = 0;
+   2 | int limite = 10;
+   3 | while (contador < limite) {
+   4 |     if (contador > 5) {
+   5 |         contador = contador + 2;
+   6 |     } else {
+   7 |         contador = contador + 1;
+   8 |     }
+   9 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SEMANTICOS)
+
+TABLA DE SIMBOLOS GENERADA:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | contador         | int      | global   | global         | 0     | 3              | L:1, C:1  |
+| 2   | limite           | int      | global   | global         | 0     | 10             | L:2, C:1  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 2 | Variables Globales = 2 | Variables Locales = 0
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) ANOTADO CON TIPOS:
+└── Programa (3 declaraciones/sentencias)
+    ├── Declaración: int contador (Con inicializador) [Tipo: int] (L:1, C:1)
+    │   └── Literal (int): 0 (L:1, C:16)
+    ├── Declaración: int limite (Con inicializador) [Tipo: int] (L:2, C:1)
+    │   └── Literal (int): 10 (L:2, C:14)
+    └── Estructura 'while' (L:3, C:1)
+        ├── Condición:
+        │   └── Op Binaria '<' [Tipo: int] (L:3, C:8)
+        │       ├── Identificador: contador [Tipo: int] (L:3, C:8)
+        │       └── Identificador: limite [Tipo: int] (L:3, C:19)
+        └── Cuerpo:
+            └── Bloque {...} (1 sentencias)
+                └── Estructura 'if' (L:4, C:5)
+                    ├── Condición:
+                    │   └── Op Binaria '>' [Tipo: int] (L:4, C:9)
+                    │       ├── Identificador: contador [Tipo: int] (L:4, C:9)
+                    │       └── Literal (int): 5 (L:4, C:20)
+                    ├── Bloque Then:
+                    │   └── Bloque {...} (1 sentencias)
+                    │       └── Asignación: contador = [Tipo: int] (L:6, C:5)
+                    │           └── Op Binaria '+' [Tipo: int] (L:5, C:20)
+                    │               ├── Identificador: contador [Tipo: int] (L:5, C:20)
+                    │               └── Literal (int): 2 (L:5, C:31)
+                    └── Bloque Else:
+                        └── Bloque {...} (1 sentencias)
+                            └── Asignación: contador = [Tipo: int] (L:8, C:5)
+                                └── Op Binaria '+' [Tipo: int] (L:7, C:20)
+                                    ├── Identificador: contador [Tipo: int] (L:7, C:20)
+                                    └── Literal (int): 1 (L:7, C:31)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #5: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #06: Error de Tipo: Asignación de float a int [CASO INVALIDO CON ERRORES]
+Categoria: Incompatibilidad de Tipos (Rúbrica)
+Comportamiento Esperado: Detección de 'Tipo Incompatible en Asignación: se esperaba int pero se obtuvo float'.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | int x;
+   2 | float y = 3.5;
+   3 | x = y;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+TABLA DE ERRORES SEMANTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ÁMBITO        | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 3     | 7    | global        | Tipo Incompatible en Asignación      | Error: Tipo de dato incompatible en...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SEMÁNTICOS:
+   • Tipo Incompatible en Asignación         : 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 3, Columna 7 | [Tipo Incompatible en Asignación] | Identificador: 'x'
+      Ámbito: 'global'
+      Descripción: Error: Tipo de dato incompatible en la asignación a 'x' en la línea 3, columna 7. Se esperaba 'int' pero se obtuvo 'float'.
+      Sugerencia de corrección: No es posible asignar un valor de tipo 'float' a una variable de tipo 'int'.
+
+TABLA DE SIMBOLOS EN EL PUNTO DEL ERROR:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | x                | int      | global   | global         | 0     | (indefinido)   | L:1, C:1  |
+| 2   | y                | float    | global   | global         | 0     | 3.5            | L:2, C:1  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 2 | Variables Globales = 2 | Variables Locales = 0
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #6: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #07: Error de Tipo: Asignación de int a float [CASO INVALIDO CON ERRORES]
+Categoria: Incompatibilidad de Tipos (Rúbrica)
+Comportamiento Esperado: Detección de 'Tipo Incompatible en Asignación: se esperaba float pero se obtuvo int'.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | int a;
+   2 | a = 5;
+   3 | float b;
+   4 | b = a;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+TABLA DE ERRORES SEMANTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ÁMBITO        | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 4     | 7    | global        | Tipo Incompatible en Asignación      | Error: Tipo de dato incompatible en...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SEMÁNTICOS:
+   • Tipo Incompatible en Asignación         : 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 4, Columna 7 | [Tipo Incompatible en Asignación] | Identificador: 'b'
+      Ámbito: 'global'
+      Descripción: Error: Tipo de dato incompatible en la asignación a 'b' en la línea 4, columna 7. Se esperaba 'float' pero se obtuvo 'int'.
+      Sugerencia de corrección: No es posible asignar un valor de tipo 'int' a una variable de tipo 'float'.
+
+TABLA DE SIMBOLOS EN EL PUNTO DEL ERROR:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | a                | int      | global   | global         | 0     | 5              | L:1, C:1  |
+| 2   | b                | float    | global   | global         | 0     | (indefinido)   | L:3, C:1  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 2 | Variables Globales = 2 | Variables Locales = 0
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #7: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #08: Error de Identificador: Variable No Declarada [CASO INVALIDO CON ERRORES]
+Categoria: Identificador No Declarado (Rúbrica)
+Comportamiento Esperado: Detección de 'Identificador No Declarado: 'c' en línea 1'.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | c = 10;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+TABLA DE ERRORES SEMANTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ÁMBITO        | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 1     | 8    | global        | Identificador No Declarado           | Error: Identificador 'c' no declara...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SEMÁNTICOS:
+   • Identificador No Declarado              : 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 1, Columna 8 | [Identificador No Declarado] | Identificador: 'c'
+      Ámbito: 'global'
+      Descripción: Error: Identificador 'c' no declarado en la línea 1, columna 8.
+      Sugerencia de corrección: Declare la variable 'c' antes de asignarle un valor (ejemplo: int c;).
+
+TABLA DE SIMBOLOS EN EL PUNTO DEL ERROR:
+Tabla de símbolos vacía (no se registraron identificadores).
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #8: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #09: Error de Ámbito: Acceso a Variable Local Fuera de su Función [CASO INVALIDO CON ERRORES]
+Categoria: Violación de Ámbito (Scope)
+Comportamiento Esperado: Detección de 'Identificador No Declarado: 'variable_local' en el ámbito global'.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | void miFuncion() {
+   2 |     int variable_local = 10;
+   3 | }
+   4 | variable_local = 20;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+TABLA DE ERRORES SEMANTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ÁMBITO        | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 4     | 21   | global        | Identificador No Declarado           | Error: Identificador 'variable_loca...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SEMÁNTICOS:
+   • Identificador No Declarado              : 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 4, Columna 21 | [Identificador No Declarado] | Identificador: 'variable_local'
+      Ámbito: 'global'
+      Descripción: Error: Identificador 'variable_local' no declarado en la línea 4, columna 21.
+      Sugerencia de corrección: Declare la variable 'variable_local' antes de asignarle un valor (ejemplo: int variable_local;).
+
+TABLA DE SIMBOLOS EN EL PUNTO DEL ERROR:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | miFuncion        | void     | global   | global         | 0     | func_miFuncion | L:1, C:1  |
+| 2   | variable_local   | int      | local    | miFuncion      | 1     | 10             | L:2, C:5  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 2 | Variables Globales = 1 | Variables Locales = 1
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #9: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #10: Error de Redeclaración: Identificador Duplicado en el Mismo Ámbito [CASO INVALIDO CON ERRORES]
+Categoria: Redeclaración en Mismo Ámbito
+Comportamiento Esperado: Detección de 'Redeclaración de Identificador en Mismo Ámbito: 'saldo''.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | int saldo = 100;
+   2 | int saldo = 200;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+TABLA DE ERRORES SEMANTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ÁMBITO        | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 2     | 1    | global        | Redeclaración de Identificador en Mismo Ámbito | Error: El identificador 'saldo' ya ...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SEMÁNTICOS:
+   • Redeclaración de Identificador en Mismo Ámbito: 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 2, Columna 1 | [Redeclaración de Identificador en Mismo Ámbito] | Identificador: 'saldo'
+      Ámbito: 'global'
+      Descripción: Error: El identificador 'saldo' ya fue declarado previamente en el ámbito 'global' (línea 1).
+      Sugerencia de corrección: Utilice un nombre distinto o evite redeclarar 'saldo' en el mismo bloque.
+
+TABLA DE SIMBOLOS EN EL PUNTO DEL ERROR:
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| #   | IDENTIFICADOR    | TIPO     | ALCANCE  | ÁMBITO         | NIVEL | VALOR ASIGNADO | LÍNEA:COL |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+| 1   | saldo            | int      | global   | global         | 0     | 100            | L:1, C:1  |
++-----+------------------+----------+----------+----------------+-------+----------------+-----------+
+
+  RESUMEN DE SÍMBOLOS: Total = 1 | Variables Globales = 1 | Variables Locales = 0
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #10: [APROBADO]
+
+================================================================================
+ RESUMEN GENERAL DE EJECUCION DE PRUEBAS
+================================================================================
+ Total de Casos Evaluados: 10
+ Casos Aprobados         : 10
+ Casos Fallados          : 0
+ Tasa de Exito           : 100.0%
+================================================================================
+================================================================================
+ CENTRO UNIVERSITARIO DE CIENCIAS EXACTAS E INGENIERIAS
+ DIVISION DE ELECTRONICA Y COMPUTACION
+ DEPARTAMENTO DE CIENCIAS COMPUTACIONALES
+ MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+ PROFESOR: RIGOBERTO CARDENAS LARIOS
+ ACTIVIDAD 7: ANALISIS SEMANTICO - TABLA DE SIMBOLOS Y TIPOS DE DATOS
+ INTEGRANTES DEL EQUIPO (ORDEN ALFABETICO POR PRIMER APELLIDO):
+   1. DIAZ TORRES JAZMIN MONTSERRAT
+   2. FIERRO MELENDEZ ERNESTO HATUEY
+   3. HERNANDEZ GARCIA HECTOR GABRIEL
+   4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================

@@ -1,0 +1,431 @@
+================================================================================
+ CENTRO UNIVERSITARIO DE CIENCIAS EXACTAS E INGENIERIAS
+ DIVISION DE ELECTRONICA Y COMPUTACION
+ DEPARTAMENTO DE CIENCIAS COMPUTACIONALES
+ MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+ PROFESOR: RIGOBERTO CARDENAS LARIOS
+ ACTIVIDAD 5: ANALISIS SINTACTICO DE ESTRUCTURAS DE CONTROL
+ INTEGRANTES DEL EQUIPO (ORDEN ALFABETICO POR PRIMER APELLIDO):
+   1. DIAZ TORRES JAZMIN MONTSERRAT
+   2. FIERRO MELENDEZ ERNESTO HATUEY
+   3. HERNANDEZ GARCIA HECTOR GABRIEL
+   4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
+
+Iniciando Bateria de Pruebas del Analizador Sintactico (10 casos en total)...
+
+--------------------------------------------------------------------------------
+TEST #01: Sentencia Condicional if-else Completa [CASO VALIDO]
+Categoria: Estructura Condicional Válida (Rúbrica)
+Comportamiento Esperado: Generación exitosa del AST: nodo IfNode con rama Then y rama Else entre llaves.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | if (x > 0) {
+   2 |     x = x + 1;
+   3 | } else {
+   4 |     x = x - 1;
+   5 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SINTACTICOS)
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+└── Programa (1 sentencias/estructuras)
+    └── Estructura 'if' (L:1, C:1)
+        ├── Condición:
+        │   └── Operación Binaria: '>' (L:1, C:5)
+        │       ├── Identificador: x (L:1, C:5)
+        │       └── Literal (int): 0 (L:1, C:9)
+        ├── Bloque Then:
+        │   └── Bloque {...} (1 sentencias)
+        │       └── Asignación: x = (L:2, C:5)
+        │           └── Operación Binaria: '+' (L:2, C:9)
+        │               ├── Identificador: x (L:2, C:9)
+        │               └── Literal (int): 1 (L:2, C:13)
+        └── Bloque Else:
+            └── Bloque {...} (1 sentencias)
+                └── Asignación: x = (L:4, C:5)
+                    └── Operación Binaria: '-' (L:4, C:9)
+                        ├── Identificador: x (L:4, C:9)
+                        └── Literal (int): 1 (L:4, C:13)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #1: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #02: Bucle Iterativo while Estándar [CASO VALIDO]
+Categoria: Estructura Iterativa Válida (Rúbrica)
+Comportamiento Esperado: Generación exitosa del AST: nodo WhileNode con condición y bloque de cuerpo entre llaves.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | while (y < 10) {
+   2 |     y = y + 1;
+   3 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SINTACTICOS)
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+└── Programa (1 sentencias/estructuras)
+    └── Estructura 'while' (L:1, C:1)
+        ├── Condición:
+        │   └── Operación Binaria: '<' (L:1, C:8)
+        │       ├── Identificador: y (L:1, C:8)
+        │       └── Literal (int): 10 (L:1, C:12)
+        └── Cuerpo del Bucle:
+            └── Bloque {...} (1 sentencias)
+                └── Asignación: y = (L:2, C:5)
+                    └── Operación Binaria: '+' (L:2, C:9)
+                        ├── Identificador: y (L:2, C:9)
+                        └── Literal (int): 1 (L:2, C:13)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #2: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #03: Bucle Determinado for Estándar [CASO VALIDO]
+Categoria: Estructura Iterativa Válida (Rúbrica)
+Comportamiento Esperado: Generación exitosa del AST: nodo ForNode con inicialización, condición, actualización y bloque.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | for (i = 0; i < 10; i = i + 1) {
+   2 |     suma = suma + i;
+   3 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SINTACTICOS)
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+└── Programa (1 sentencias/estructuras)
+    └── Estructura 'for' (L:1, C:1)
+        ├── Inicialización:
+        │   └── Asignación: i = (L:1, C:6)
+        │       └── Literal (int): 0 (L:1, C:10)
+        ├── Condición:
+        │   └── Operación Binaria: '<' (L:1, C:13)
+        │       ├── Identificador: i (L:1, C:13)
+        │       └── Literal (int): 10 (L:1, C:17)
+        ├── Actualización:
+        │   └── Asignación: i = (L:1, C:21)
+        │       └── Operación Binaria: '+' (L:1, C:25)
+        │           ├── Identificador: i (L:1, C:25)
+        │           └── Literal (int): 1 (L:1, C:29)
+        └── Cuerpo del Bucle:
+            └── Bloque {...} (1 sentencias)
+                └── Asignación: suma = (L:2, C:5)
+                    └── Operación Binaria: '+' (L:2, C:12)
+                        ├── Identificador: suma (L:2, C:12)
+                        └── Identificador: i (L:2, C:19)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #3: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #04: Estructuras Anidadas (for con if-else interno) [CASO VALIDO]
+Categoria: Estructuras de Control Anidadas Válidas
+Comportamiento Esperado: AST multinivel con bucle for conteniendo una estructura condicional if-else.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | for (int i = 0; i < 100; i++) {
+   2 |     if (i % 2 == 0) {
+   3 |         pares = pares + 1;
+   4 |     } else {
+   5 |         impares = impares + 1;
+   6 |     }
+   7 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SINTACTICOS)
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+└── Programa (1 sentencias/estructuras)
+    └── Estructura 'for' (L:1, C:1)
+        ├── Inicialización:
+        │   └── Declaración: int i (Con inicializador) (L:1, C:6)
+        │       └── Literal (int): 0 (L:1, C:14)
+        ├── Condición:
+        │   └── Operación Binaria: '<' (L:1, C:17)
+        │       ├── Identificador: i (L:1, C:17)
+        │       └── Literal (int): 100 (L:1, C:21)
+        ├── Actualización:
+        │   └── Op Unaria Postfija: '++' (L:1, C:27)
+        │       └── Identificador: i (L:1, C:26)
+        └── Cuerpo del Bucle:
+            └── Bloque {...} (1 sentencias)
+                └── Estructura 'if' (L:2, C:5)
+                    ├── Condición:
+                    │   └── Operación Binaria: '==' (L:2, C:9)
+                    │       ├── Operación Binaria: '%' (L:2, C:9)
+                    │       │   ├── Identificador: i (L:2, C:9)
+                    │       │   └── Literal (int): 2 (L:2, C:13)
+                    │       └── Literal (int): 0 (L:2, C:18)
+                    ├── Bloque Then:
+                    │   └── Bloque {...} (1 sentencias)
+                    │       └── Asignación: pares = (L:3, C:9)
+                    │           └── Operación Binaria: '+' (L:3, C:17)
+                    │               ├── Identificador: pares (L:3, C:17)
+                    │               └── Literal (int): 1 (L:3, C:25)
+                    └── Bloque Else:
+                        └── Bloque {...} (1 sentencias)
+                            └── Asignación: impares = (L:5, C:9)
+                                └── Operación Binaria: '+' (L:5, C:19)
+                                    ├── Identificador: impares (L:5, C:19)
+                                    └── Literal (int): 1 (L:5, C:29)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #4: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #05: Programa Completo en C con Función main y Control Múltiple [CASO VALIDO]
+Categoria: Programa Completo Válido
+Comportamiento Esperado: AST de función main con declaraciones, bucle while, condicional if-else y sentencia return.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | int main() {
+   2 |     int total = 0;
+   3 |     int k = 1;
+   4 |     while (k <= 5) {
+   5 |         if (k > 2) {
+   6 |             total = total + k * 2;
+   7 |         } else {
+   8 |             total = total + 1;
+   9 |         }
+  10 |         k = k + 1;
+  11 |     }
+  12 |     return total;
+  13 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES SINTACTICOS)
+
+ARBOL DE SINTAXIS ABSTRACTA (AST) GENERADO:
+└── Programa (1 sentencias/estructuras)
+    └── Función 'main' -> int(void) (L:1, C:1)
+        └── Bloque {...} (4 sentencias)
+            ├── Declaración: int total (Con inicializador) (L:2, C:5)
+            │   └── Literal (int): 0 (L:2, C:17)
+            ├── Declaración: int k (Con inicializador) (L:3, C:5)
+            │   └── Literal (int): 1 (L:3, C:13)
+            ├── Estructura 'while' (L:4, C:5)
+            │   ├── Condición:
+            │   │   └── Operación Binaria: '<=' (L:4, C:12)
+            │   │       ├── Identificador: k (L:4, C:12)
+            │   │       └── Literal (int): 5 (L:4, C:17)
+            │   └── Cuerpo del Bucle:
+            │       └── Bloque {...} (2 sentencias)
+            │           ├── Estructura 'if' (L:5, C:9)
+            │           │   ├── Condición:
+            │           │   │   └── Operación Binaria: '>' (L:5, C:13)
+            │           │   │       ├── Identificador: k (L:5, C:13)
+            │           │   │       └── Literal (int): 2 (L:5, C:17)
+            │           │   ├── Bloque Then:
+            │           │   │   └── Bloque {...} (1 sentencias)
+            │           │   │       └── Asignación: total = (L:6, C:13)
+            │           │   │           └── Operación Binaria: '+' (L:6, C:21)
+            │           │   │               ├── Identificador: total (L:6, C:21)
+            │           │   │               └── Operación Binaria: '*' (L:6, C:29)
+            │           │   │                   ├── Identificador: k (L:6, C:29)
+            │           │   │                   └── Literal (int): 2 (L:6, C:33)
+            │           │   └── Bloque Else:
+            │           │       └── Bloque {...} (1 sentencias)
+            │           │           └── Asignación: total = (L:8, C:13)
+            │           │               └── Operación Binaria: '+' (L:8, C:21)
+            │           │                   ├── Identificador: total (L:8, C:21)
+            │           │                   └── Literal (int): 1 (L:8, C:29)
+            │           └── Asignación: k = (L:10, C:9)
+            │               └── Operación Binaria: '+' (L:10, C:13)
+            │                   ├── Identificador: k (L:10, C:13)
+            │                   └── Literal (int): 1 (L:10, C:17)
+            └── Sentencia 'return' (L:12, C:5)
+                └── Identificador: total (L:12, C:12)
+
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #5: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #06: Error en if: Paréntesis de Cierre Faltante [CASO INVALIDO CON ERRORES]
+Categoria: Error de Paréntesis en Condicional (Rúbrica)
+Comportamiento Esperado: Detección y reporte: 'Paréntesis de cierre ')' faltante en estructura 'if''.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | if (x > 0 {
+   2 |     x = x + 1;
+   3 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) sintactico(s))
+
+TABLA DE ERRORES SINTACTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ESTRUCTURA    | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 1     | 11   | if            | Paréntesis Faltantes o Desbalanceados | Paréntesis de cierre ')' faltante e...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SINTÁCTICOS:
+   • Paréntesis Faltantes o Desbalanceados: 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 1, Columna 11 | [Paréntesis Faltantes o Desbalanceados]
+      Estructura: 'if'
+      Descripción: Paréntesis de cierre ')' faltante en estructura 'if' en la línea 1, columna 11.
+      Sugerencia de corrección: Cierre la expresión condicional con ')'. Ejemplo: if (x > 0) { ... }
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #6: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #07: Error en while: Paréntesis de Apertura Faltante [CASO INVALIDO CON ERRORES]
+Categoria: Error de Paréntesis en Bucle while (Rúbrica)
+Comportamiento Esperado: Detección y reporte: 'Paréntesis de apertura '(' faltante en estructura 'while''.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | while y < 10) {
+   2 |     y = y + 1;
+   3 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 5 error(es) sintactico(s))
+
+TABLA DE ERRORES SINTACTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ESTRUCTURA    | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 1     | 7    | while         | Paréntesis Faltantes o Desbalanceados | Paréntesis de apertura '(' faltante...   |
+| 2   | 1     | 7    | while         | Bloque de Sentencias Faltante o Sin Llaves | Error: Bloque de sentencias faltant...   |
+| 3   | 1     | 13   | sentencia_expresion | Punto y Coma Faltante en Sentencia   | Punto y coma ';' faltante tras la e...   |
+| 4   | 1     | 13   | expresion     | Error Sintáctico General             | Token inesperado ')' en la línea 1,...   |
+| 5   | 1     | 15   | sentencia_expresion | Punto y Coma Faltante en Sentencia   | Punto y coma ';' faltante tras la e...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SINTÁCTICOS:
+   • Paréntesis Faltantes o Desbalanceados: 1 ocurrencia(s)
+   • Bloque de Sentencias Faltante o Sin Llaves: 1 ocurrencia(s)
+   • Punto y Coma Faltante en Sentencia  : 2 ocurrencia(s)
+   • Error Sintáctico General            : 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 1, Columna 7 | [Paréntesis Faltantes o Desbalanceados]
+      Estructura: 'while'
+      Descripción: Paréntesis de apertura '(' faltante en estructura 'while' en la línea 1, columna 1.
+      Sugerencia de corrección: Agregue '(' inmediatamente después de 'while'. Ejemplo: while (y < 10) { ... }
+  --> Línea 1, Columna 7 | [Bloque de Sentencias Faltante o Sin Llaves]
+      Estructura: 'while'
+      Descripción: Error: Bloque de sentencias faltante o sin llaves '{' en la estructura 'while' en la línea 1, columna 7.
+      Sugerencia de corrección: Encierre el cuerpo del bucle 'while' entre llaves '{ ... }'.
+  --> Línea 1, Columna 13 | [Punto y Coma Faltante en Sentencia]
+      Estructura: 'sentencia_expresion'
+      Descripción: Punto y coma ';' faltante tras la expresión en la línea 1, columna 13.
+      Sugerencia de corrección: Agregue ';' al final de la sentencia.
+  --> Línea 1, Columna 13 | [Error Sintáctico General]
+      Estructura: 'expresion'
+      Descripción: Token inesperado ')' en la línea 1, columna 13.
+      Sugerencia de corrección: Verifique que la sintaxis de la expresión u operando sea válida.
+  --> Línea 1, Columna 15 | [Punto y Coma Faltante en Sentencia]
+      Estructura: 'sentencia_expresion'
+      Descripción: Punto y coma ';' faltante tras la expresión en la línea 1, columna 15.
+      Sugerencia de corrección: Agregue ';' al final de la sentencia.
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #7: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #08: Error en for: Paréntesis de Apertura Faltante [CASO INVALIDO CON ERRORES]
+Categoria: Error de Paréntesis en Bucle for (Rúbrica)
+Comportamiento Esperado: Detección y reporte: 'Paréntesis de apertura '(' faltante en estructura 'for''.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | for i = 0; i < 10; i = i + 1) {
+   2 |     suma = suma + i;
+   3 | }
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) sintactico(s))
+
+TABLA DE ERRORES SINTACTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ESTRUCTURA    | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 1     | 5    | for           | Paréntesis Faltantes o Desbalanceados | Paréntesis de apertura '(' faltante...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SINTÁCTICOS:
+   • Paréntesis Faltantes o Desbalanceados: 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 1, Columna 5 | [Paréntesis Faltantes o Desbalanceados]
+      Estructura: 'for'
+      Descripción: Paréntesis de apertura '(' faltante en estructura 'for' en la línea 1, columna 1.
+      Sugerencia de corrección: Coloque '(' inmediatamente después de 'for'. Ejemplo: for (i = 0; i < 10; i++) { ... }
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #8: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #09: Error en if: Bloque de Sentencias Sin Llaves Requeridas [CASO INVALIDO CON ERRORES]
+Categoria: Error de Bloque Obligatorio (Rúbrica)
+Comportamiento Esperado: Detección y reporte: 'Bloque de sentencias faltante o sin llaves '{' en la estructura 'if''.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | if (x > 0)
+   2 |     x = x + 1;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) sintactico(s))
+
+TABLA DE ERRORES SINTACTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ESTRUCTURA    | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 2     | 5    | if            | Bloque de Sentencias Faltante o Sin Llaves | Error: Bloque de sentencias faltant...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SINTÁCTICOS:
+   • Bloque de Sentencias Faltante o Sin Llaves: 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 2, Columna 5 | [Bloque de Sentencias Faltante o Sin Llaves]
+      Estructura: 'if'
+      Descripción: Error: Bloque de sentencias faltante o sin llaves '{' en la estructura 'if' en la línea 2, columna 5.
+      Sugerencia de corrección: La gramática exige que las sentencias del 'if' estén delimitadas por llaves obligatorias. Ejemplo: if (x > 0) { ... }
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #9: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #10: Error en while: Llave de Cierre Faltante al Final [CASO INVALIDO CON ERRORES]
+Categoria: Error de Llaves Desbalanceadas (Rúbrica)
+Comportamiento Esperado: Detección y reporte: 'Llave de cierre '}' faltante en bloque de estructura 'while''.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EVALUADO:
+   1 | while (y < 10) {
+   2 |     y = y + 1;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) sintactico(s))
+
+TABLA DE ERRORES SINTACTICOS DETECTADOS:
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | ESTRUCTURA    | CATEGORÍA DE ERROR                   | DESCRIPCIÓN Y SUGERENCIA                 |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+| 1   | 2     | 15   | while         | Llave de Cierre Faltante en Bloque   | Error: Llave de cierre '}' faltante...   |
++-----+-------+------+---------------+--------------------------------------+------------------------------------------+
+
+  DESGLOSE ESTADÍSTICO DE ERRORES SINTÁCTICOS:
+   • Llave de Cierre Faltante en Bloque  : 1 ocurrencia(s)
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 2, Columna 15 | [Llave de Cierre Faltante en Bloque]
+      Estructura: 'while'
+      Descripción: Error: Llave de cierre '}' faltante en bloque de estructura 'while' en la línea 2, columna 15. (Bloque iniciado en línea 1, col 16).
+      Sugerencia de corrección: Agregue '}' para cerrar el bloque de sentencias.
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #10: [APROBADO]
+
+================================================================================
+ RESUMEN GENERAL DE EJECUCION DE PRUEBAS
+================================================================================
+ Total de Casos Evaluados: 10
+ Casos Aprobados         : 10
+ Casos Fallados          : 0
+ Tasa de Exito           : 100.0%
+================================================================================
+================================================================================
+ CENTRO UNIVERSITARIO DE CIENCIAS EXACTAS E INGENIERIAS
+ DIVISION DE ELECTRONICA Y COMPUTACION
+ DEPARTAMENTO DE CIENCIAS COMPUTACIONALES
+ MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+ PROFESOR: RIGOBERTO CARDENAS LARIOS
+ ACTIVIDAD 5: ANALISIS SINTACTICO DE ESTRUCTURAS DE CONTROL
+ INTEGRANTES DEL EQUIPO (ORDEN ALFABETICO POR PRIMER APELLIDO):
+   1. DIAZ TORRES JAZMIN MONTSERRAT
+   2. FIERRO MELENDEZ ERNESTO HATUEY
+   3. HERNANDEZ GARCIA HECTOR GABRIEL
+   4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
