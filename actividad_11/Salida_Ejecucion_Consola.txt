@@ -1,0 +1,326 @@
+================================================================================
+COMPILADOR C - TRADUCTORES DE LENGUAJE (CUCEI - UDG)
+ACTIVIDAD 11: CÓDIGO INTERMEDIO PARA CONTROL DE FLUJO
+PROFESOR: RIGOBERTO CARDENAS LARIOS
+--------------------------------------------------------------------------------
+INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+1. DIAZ TORRES JAZMIN MONTSERRAT
+2. FIERRO MELÉNDEZ ERNESTO HATUEY
+3. HERNANDEZ GARCIA HECTOR GABRIEL
+4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
+
+================================================================================
+CASO DE PRUEBA #1: [VÁLIDO] Estructura Condicional if-else (Ejemplo Rúbrica)
+Categoría: Estructuras Condicionales
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    if (x > y) {
+        z = x;
+    } else {
+        z = y;
+    }
+
+COMPORTAMIENTO ESPERADO:
+    Genera temporales y saltos if/else con etiquetas L1 (then) y L2 (end) con comentarios descriptivos.
+--------------------------------------------------------------------------------
+RESULTADO: GENERACIÓN EXITOSA DE CÓDIGO INTERMEDIO (TAC):
+--------------------------------------------------------------------------------
+    t1 = x > y                   # t1 es una etiqueta temporal para la condición x > y
+    if t1 goto L1                # Si t1 es verdadero, salta a la etiqueta L1
+    z = y                        # Asigna y a z
+    goto L2                      # Salta a la etiqueta L2 después del bloque else
+    L1:              # Etiqueta L1 para el bloque if
+    z = x                        # Asigna x a z
+    L2:              # Etiqueta L2 marca el final de la estructura condicional
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Código intermedio generado conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #2: [VÁLIDO] Estructura de Selección Múltiple switch-case (Ejemplo Rúbrica)
+Categoría: Estructuras Condicionales
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    switch (n) {
+        case 1:
+            result = "Uno";
+            break;
+        case 2:
+            result = "Dos";
+            break;
+        default:
+            result = "Otro";
+    }
+
+COMPORTAMIENTO ESPERADO:
+    Genera saltos condicionales if t2 == 1, if t2 == 2, goto default y etiquetas L1..L4.
+--------------------------------------------------------------------------------
+RESULTADO: GENERACIÓN EXITOSA DE CÓDIGO INTERMEDIO (TAC):
+--------------------------------------------------------------------------------
+    t1 = n                       # t1 es una etiqueta temporal para el valor de n
+    if t1 == 1 goto L1           # Si t1 es 1, salta a la etiqueta L1
+    if t1 == 2 goto L2           # Si t1 es 2, salta a la etiqueta L2
+    goto L3                      # Si t1 no coincide con ningún caso, salta a la etiqueta L3
+    L1:              # Etiqueta L1 para el caso 1
+    result = "Uno"               # Asigna "Uno" a result
+    goto L4                      # Salta a la etiqueta L4 después de manejar el caso 1
+    L2:              # Etiqueta L2 para el caso 2
+    result = "Dos"               # Asigna "Dos" a result
+    goto L4                      # Salta a la etiqueta L4 después de manejar el caso 2
+    L3:              # Etiqueta L3 para el caso default
+    result = "Otro"              # Asigna "Otro" a result
+    L4:              # Etiqueta L4 marca el final de la estructura switch
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Código intermedio generado conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #3: [VÁLIDO] Bucles while, for y do-while (Ejemplos Rúbrica)
+Categoría: Bucles y Ciclos
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    while (i < 10) {
+        i = i + 1;
+    }
+    
+    for (int i = 0; i < 5; i++) {
+        sum = sum + i;
+    }
+    
+    do {
+        count = count + 1;
+    } while (count < 10);
+
+COMPORTAMIENTO ESPERADO:
+    Genera TAC para while (L1..L2 con if not), for (init, condición, actualización, L3..L4), y do-while (L5 y condición al final).
+--------------------------------------------------------------------------------
+RESULTADO: GENERACIÓN EXITOSA DE CÓDIGO INTERMEDIO (TAC):
+--------------------------------------------------------------------------------
+    L1:              # Etiqueta L1 marca el inicio del bucle
+    t1 = i < 10                  # t1 es una etiqueta temporal para la condición i < 10
+    if not t1 goto L2            # Si t1 es falso, salta a la etiqueta L2 (fin del bucle)
+    t2 = i + 1                   # t2 es una etiqueta temporal para la suma de i y 1
+    i = t2                       # Asigna t2 a i
+    goto L1                      # Salta de vuelta al inicio del bucle L1
+    L2:              # Etiqueta L2 marca el final del bucle
+    i = 0                        # Inicialización
+    L3:              # Etiqueta L3 marca el inicio del bucle
+    t3 = i < 5                   # t3 es una etiqueta temporal para la condición i < 5
+    if not t3 goto L4            # Si t3 es falso, salta a la etiqueta L4 (fin del bucle)
+    t4 = sum + i                 # t4 es una etiqueta temporal para la suma de sum y i
+    sum = t4                     # Asigna t4 a sum
+    i = i + 1                    # Incrementa i
+    goto L3                      # Salta de vuelta al inicio del bucle L3
+    L4:              # Etiqueta L4 marca el final del bucle
+    L5:              # Etiqueta L5 marca el inicio del bucle
+    t5 = count + 1               # t5 es una etiqueta temporal para la suma de count y 1
+    count = t5                   # Asigna t5 a count
+    t6 = count < 10              # t6 es una etiqueta temporal para la condición count < 10
+    if t6 goto L5                # Si t6 es verdadero, salta de vuelta al inicio del bucle L5
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Código intermedio generado conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #4: [VÁLIDO] Definición y Llamada de Métodos (Ejemplo Rúbrica)
+Categoría: Métodos y Funciones
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    int suma(int a, int b) {
+        return a + b;
+    }
+    
+    result = suma(5, 3);
+
+COMPORTAMIENTO ESPERADO:
+    Genera definición con etiqueta L_metodo, paso de parámetros t8=5, t9=3, instrucción 'call' y asignación de 'return_value'.
+--------------------------------------------------------------------------------
+RESULTADO: GENERACIÓN EXITOSA DE CÓDIGO INTERMEDIO (TAC):
+--------------------------------------------------------------------------------
+    # Definición del método suma
+    L1:              # Etiqueta L1 marca el inicio del método suma
+    t1 = a + b                   # t1 es una etiqueta temporal para la suma de a y b
+    return t1                    # Retorna el valor de t1
+    t2 = 5                       # t2 es una etiqueta temporal para el primer parámetro
+    t3 = 3                       # t3 es una etiqueta temporal para el segundo parámetro
+    call L1                      # Llama al método definido en la etiqueta L1
+    result = return_value        # Asigna el valor retornado por el método a result
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Código intermedio generado conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #5: [VÁLIDO] Clases, Métodos de Clase y Creación/Uso de Objetos (Ejemplo Rúbrica)
+Categoría: Clases y Objetos
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    class Persona {
+        int edad;
+        void celebrarCumpleaños() {
+            edad = edad + 1;
+        }
+    }
+    
+    Persona p = new Persona();
+    p.celebrarCumpleaños();
+
+COMPORTAMIENTO ESPERADO:
+    Genera definición de clase con método, creación de instancia con 'obj = create Persona' y llamada 'call' al método del objeto.
+--------------------------------------------------------------------------------
+RESULTADO: GENERACIÓN EXITOSA DE CÓDIGO INTERMEDIO (TAC):
+--------------------------------------------------------------------------------
+    # Definición de la clase Persona
+    # (omitiendo detalles de manejo interno de objetos para simplicidad)
+    # Definición del método celebrarCumpleaños
+    L1:              # Etiqueta L1 marca el inicio del método celebrarCumpleaños
+    t1 = edad + 1                # t1 es una etiqueta temporal para la suma de edad y 1
+    edad = t1                    # Asigna t1 a edad
+    # Creación del objeto Persona
+    obj = create Persona         # Representa la creación del objeto p
+    call L1                      # Llama al método celebrarCumpleaños del objeto p
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Código intermedio generado conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #6: [INVÁLIDO (CONTROL DE ERRORES)] Llamada a Método o Función No Declarada
+Categoría: Errores Semánticos en Métodos
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    result = calcularFactorial(10);
+
+COMPORTAMIENTO ESPERADO:
+    Detecta y reporta error semántico por llamada a función 'calcularFactorial' no definida en la tabla de símbolos.
+--------------------------------------------------------------------------------
+RESULTADO: ERRORES SEMÁNTICOS / SINTÁCTICOS DETECTADOS CORRECTAMENTE:
+--------------------------------------------------------------------------------
+    [Error Semántico] Línea 1, Columna 10: Llamada a método o función no declarada 'calcularFactorial'.
+    -> Sugerencia: Defina la función 'calcularFactorial' antes de invocarla.
+--------------------------------------------------------------------------------
+INSTRUCCIONES TAC GENERADAS CON GUARDAS DE ERROR:
+    error "Llamada a método no declarado 'calcularFactorial'"
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error semántico interceptado y reportado adecuadamente]
+
+================================================================================
+CASO DE PRUEBA #7: [INVÁLIDO (CONTROL DE ERRORES)] Aridad Incorrecta en Llamada a Método (Número de Argumentos)
+Categoría: Errores Semánticos en Métodos
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    int suma(int a, int b) {
+        return a + b;
+    }
+    
+    result = suma(5, 3, 10);
+
+COMPORTAMIENTO ESPERADO:
+    Detecta discrepancia de aridad: la función 'suma' espera 2 argumentos pero se pasaron 3.
+--------------------------------------------------------------------------------
+RESULTADO: ERRORES SEMÁNTICOS / SINTÁCTICOS DETECTADOS CORRECTAMENTE:
+--------------------------------------------------------------------------------
+    [Error Semántico] Línea 5, Columna 10: La función 'suma' espera 2 argumentos pero se proporcionaron 3.
+    -> Sugerencia: Ajuste los argumentos para cumplir con la firma: 'suma(int a, int b)'.
+--------------------------------------------------------------------------------
+INSTRUCCIONES TAC GENERADAS CON GUARDAS DE ERROR:
+    # Definición del método suma
+    L1:              # Etiqueta L1 marca el inicio del método suma
+    t1 = a + b                   # t1 es una etiqueta temporal para la suma de a y b
+    return t1                    # Retorna el valor de t1
+    error "Aridad incorrecta en llamada a 'suma'"
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error semántico interceptado y reportado adecuadamente]
+
+================================================================================
+CASO DE PRUEBA #8: [INVÁLIDO (CONTROL DE ERRORES)] Instanciación de Clase No Declarada
+Categoría: Errores Semánticos en Clases
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    Vehiculo v = new Vehiculo();
+
+COMPORTAMIENTO ESPERADO:
+    Detecta intento de instanciar clase 'Vehiculo' no declarada en el ámbito del compilador.
+--------------------------------------------------------------------------------
+RESULTADO: ERRORES SEMÁNTICOS / SINTÁCTICOS DETECTADOS CORRECTAMENTE:
+--------------------------------------------------------------------------------
+    [Error Semántico] Línea 1, Columna 14: Intento de instanciar una clase no declarada: 'Vehiculo'.
+    -> Sugerencia: Declare la clase 'class Vehiculo { ... }' antes de instanciarla.
+--------------------------------------------------------------------------------
+INSTRUCCIONES TAC GENERADAS CON GUARDAS DE ERROR:
+    # Creación del objeto Vehiculo
+    error "Clase no declarada 'Vehiculo'"
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error semántico interceptado y reportado adecuadamente]
+
+================================================================================
+CASO DE PRUEBA #9: [INVÁLIDO (CONTROL DE ERRORES)] Invocación de Método Inexistente en Objeto de Clase
+Categoría: Errores Semánticos en Clases
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    class Persona {
+        int edad;
+        void celebrarCumpleaños() {
+            edad = edad + 1;
+        }
+    }
+    
+    Persona p = new Persona();
+    p.volar();
+
+COMPORTAMIENTO ESPERADO:
+    Detecta que la clase 'Persona' no posee ningún método denominado 'volar'.
+--------------------------------------------------------------------------------
+RESULTADO: ERRORES SEMÁNTICOS / SINTÁCTICOS DETECTADOS CORRECTAMENTE:
+--------------------------------------------------------------------------------
+    [Error Semántico] Línea 9, Columna 1: La clase 'Persona' no define ningún método llamado 'volar'.
+    -> Sugerencia: Verifique la definición de la clase 'Persona' o el nombre del método 'volar'.
+--------------------------------------------------------------------------------
+INSTRUCCIONES TAC GENERADAS CON GUARDAS DE ERROR:
+    # Definición de la clase Persona
+    # (omitiendo detalles de manejo interno de objetos para simplicidad)
+    # Definición del método celebrarCumpleaños
+    L1:              # Etiqueta L1 marca el inicio del método celebrarCumpleaños
+    t1 = edad + 1                # t1 es una etiqueta temporal para la suma de edad y 1
+    edad = t1                    # Asigna t1 a edad
+    # Creación del objeto Persona
+    obj = create Persona         # Representa la creación del objeto p
+    error "Método 'volar' no existe en la clase 'Persona'"
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error semántico interceptado y reportado adecuadamente]
+
+================================================================================
+CASO DE PRUEBA #10: [INVÁLIDO (CONTROL DE ERRORES)] Tipo Incompatible en Condición de Control de Flujo
+Categoría: Errores Semánticos en Control de Flujo
+--------------------------------------------------------------------------------
+CÓDIGO FUENTE DE ENTRADA (C):
+    if ("condicion_invalida_no_booleana") {
+        z = 10;
+    }
+
+COMPORTAMIENTO ESPERADO:
+    Detecta condición no booleana (cadena literal) en estructura condicional 'if'.
+--------------------------------------------------------------------------------
+RESULTADO: ERRORES SEMÁNTICOS / SINTÁCTICOS DETECTADOS CORRECTAMENTE:
+--------------------------------------------------------------------------------
+    [Error Semántico] Línea 1, Columna 1: La condición del 'if' no puede ser una cadena literal (tipo inválido 'condicion_invalida_no_booleana').
+    -> Sugerencia: Utilice una expresión relacional o booleana (ej. 'x > y').
+--------------------------------------------------------------------------------
+INSTRUCCIONES TAC GENERADAS CON GUARDAS DE ERROR:
+    error "Tipo incompatible en condición de if"
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error semántico interceptado y reportado adecuadamente]
+
+================================================================================
+RESUMEN DE RESULTADOS DE LA SUITE DE PRUEBAS
+================================================================================
+Total de casos ejecutados: 10
+Casos exitosos:           10 / 10 (100.0%)
+Casos fallidos:           0
+>> VERIFICACIÓN COMPLETA: TODOS LOS CASOS DE PRUEBA PASARON SATISFACTORIAMENTE <<
+================================================================================
+================================================================================
+COMPILADOR C - TRADUCTORES DE LENGUAJE (CUCEI - UDG)
+ACTIVIDAD 11: CÓDIGO INTERMEDIO PARA CONTROL DE FLUJO
+PROFESOR: RIGOBERTO CARDENAS LARIOS
+--------------------------------------------------------------------------------
+INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+1. DIAZ TORRES JAZMIN MONTSERRAT
+2. FIERRO MELÉNDEZ ERNESTO HATUEY
+3. HERNANDEZ GARCIA HECTOR GABRIEL
+4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================

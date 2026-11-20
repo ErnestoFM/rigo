@@ -1,0 +1,259 @@
+================================================================================
+ CENTRO UNIVERSITARIO DE CIENCIAS EXACTAS E INGENIERIAS
+ DIVISION DE ELECTRONICA Y COMPUTACION
+ DEPARTAMENTO DE CIENCIAS COMPUTACIONALES
+ MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+ PROFESOR: RIGOBERTO CARDENAS LARIOS
+ ACTIVIDAD 10: GENERACION DE CODIGO INTERMEDIO (TRES DIRECCIONES - TAC)
+ INTEGRANTES DEL EQUIPO (ORDEN ALFABETICO POR PRIMER APELLIDO):
+   1. DIAZ TORRES JAZMIN MONTSERRAT
+   2. FIERRO MELENDEZ ERNESTO HATUEY
+   3. HERNANDEZ GARCIA HECTOR GABRIEL
+   4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
+
+Iniciando Bateria de Pruebas del Generador de Codigo Intermedio (10 casos en total)...
+
+--------------------------------------------------------------------------------
+TEST #01: Asignación de Constantes a Variables (Ejemplo Rúbrica) [CASO VALIDO]
+Categoria: Variables y Constantes (Rúbrica)
+Comportamiento Esperado: Genera temporales t1 = 5, x = t1, t2 = 10, y = t2 con comentarios descriptivos.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | x = 5;
+   2 | y = 10;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES EN GENERACION)
+
+CODIGO INTERMEDIO GENERADO (TRES DIRECCIONES - TAC):
+t1 = 5               # t1 es una etiqueta temporal que representa la constante 5
+x = t1               # Asigna el valor de t1 a x
+t2 = 10              # t2 es una etiqueta temporal que representa la constante 10
+y = t2               # Asigna el valor de t2 a y
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #1: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #02: Uso de Variables en Suma Simple (Ejemplo Rúbrica) [CASO VALIDO]
+Categoria: Uso de Variables (Rúbrica)
+Comportamiento Esperado: Genera t1 = x + y y z = t1.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | z = x + y;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES EN GENERACION)
+
+CODIGO INTERMEDIO GENERADO (TRES DIRECCIONES - TAC):
+t1 = x + y           # t1 es una etiqueta temporal que representa la suma de x y y
+z = t1               # Asigna el valor de t1 a z
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #2: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #03: Expresión Aritmética con Agrupación (Ejemplo Rúbrica) [CASO VALIDO]
+Categoria: Expresiones Aritméticas (Rúbrica)
+Comportamiento Esperado: Genera t1 = b + c, t2 = a * t1, result = t2.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | result = a * (b + c);
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES EN GENERACION)
+
+CODIGO INTERMEDIO GENERADO (TRES DIRECCIONES - TAC):
+t1 = b + c           # t1 es una etiqueta temporal que representa la suma de b y c
+t2 = a * t1          # t2 es una etiqueta temporal que representa la multiplicación de a y t1
+result = t2          # Asigna el valor de t2 a result
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #3: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #04: Expresiones Lógicas y Comparación (Ejemplo Rúbrica) [CASO VALIDO]
+Categoria: Expresiones Lógicas (Rúbrica)
+Comportamiento Esperado: Genera t1 = 10, t2 = x > y, t3 = z < t1, t4 = t2 && t3, flag = t4.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | flag = (x > y) && (z < 10);
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES EN GENERACION)
+
+CODIGO INTERMEDIO GENERADO (TRES DIRECCIONES - TAC):
+t1 = x > y           # t1 es una etiqueta temporal para la comparación x > y
+t2 = 10              # t2 es una etiqueta temporal que representa la constante 10
+t3 = z < t2          # t3 es una etiqueta temporal para la comparación z < t2
+t4 = t1 && t3        # t4 es una etiqueta temporal para la operación lógica operación lógica AND entre t1 y t3
+flag = t4            # Asigna el valor de t4 a flag
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #4: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #05: Expresiones Anidadas Complejas (Ejemplo Rúbrica) [CASO VALIDO]
+Categoria: Manejo de Expresiones Anidadas (Rúbrica)
+Comportamiento Esperado: Genera instrucciones temporales multinivel para sumas, restas, multiplicación y división con guardia.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | total = (a + b) * (c - d);
+   2 | result = (x + y) / (z - w);
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES EN GENERACION)
+
+CODIGO INTERMEDIO GENERADO (TRES DIRECCIONES - TAC):
+t1 = a + b           # t1 es una etiqueta temporal que representa la suma de a y b
+t2 = c - d           # t2 es una etiqueta temporal que representa la resta de c y d
+t3 = t1 * t2         # t3 es una etiqueta temporal que representa la multiplicación de t1 y t2
+total = t3           # Asigna el valor de t3 a total
+t4 = x + y           # t4 es una etiqueta temporal que representa la suma de x y y
+t5 = z - w           # t5 es una etiqueta temporal que representa la resta de z y w
+t6 = t4 / t5         # t6 es una etiqueta temporal que representa la división de t4 y t5
+result = t6          # Asigna el valor de t6 a result
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #5: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #06: Validación de División por Cero con Guarda (Ejemplo Rúbrica) [CASO VALIDO]
+Categoria: Detección de Errores en Operaciones (Rúbrica)
+Comportamiento Esperado: Emite guardia 'if b == 0 then error "Division by zero"' antes de calcular la división en t1.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | result = a / b;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (0 ERRORES EN GENERACION)
+
+CODIGO INTERMEDIO GENERADO (TRES DIRECCIONES - TAC):
+if b == 0 then error "Division by zero" # Valida que no se realice división por cero
+t1 = a / b           # t1 es una etiqueta temporal que representa la división de a y b
+result = t1          # Asigna el valor de t1 a result
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #6: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #07: Error Semántico: Operación Inválida entre Entero y Cadena (Ejemplo Rúbrica) [CASO INVALIDO CON ERRORES]
+Categoria: Validación de Tipos (Rúbrica)
+Comportamiento Esperado: Emite 'if type(a) != integer or type("string") != integer then error "Type mismatch"' y bloquea la operación.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | total = a + "string";
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+INSTRUCCIONES DE GUARDA / VALIDACION EMITIDAS:
+if type(a) != integer or type("string") != integer then error "Type mismatch" # Valida tipos
+
+TABLA DE ERRORES / VALIDACIONES ACTIVADAS:
++-----+-------+------+--------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | CATEGORÍA DE ERROR             | DESCRIPCIÓN Y ACCIÓN                     |
++-----+-------+------+--------------------------------+------------------------------------------+
+| 1   | 1     | 9    | Incompatibilidad de Tipos      | Operación inválida entre tipo 'int'...   |
++-----+-------+------+--------------------------------+------------------------------------------+
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 1, Columna 9 | [Incompatibilidad de Tipos]
+      Descripción: Operación inválida entre tipo 'int' y 'string'.
+      Sugerencia de corrección: Asegúrese de operar sobre el mismo tipo de dato numérico.
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #7: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #08: Error Crítico: División Explícita por Cero Constante [CASO INVALIDO CON ERRORES]
+Categoria: Error de División por Cero
+Comportamiento Esperado: Detecta división constante entre cero en compilación, emite guardia de error y reporta la anomalía.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | result = 100 / 0;
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+INSTRUCCIONES DE GUARDA / VALIDACION EMITIDAS:
+if 0 == 0 then error "Division by zero" # Valida que no se realice división por cero
+
+TABLA DE ERRORES / VALIDACIONES ACTIVADAS:
++-----+-------+------+--------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | CATEGORÍA DE ERROR             | DESCRIPCIÓN Y ACCIÓN                     |
++-----+-------+------+--------------------------------+------------------------------------------+
+| 1   | 1     | 10   | División por Cero              | Error: División por cero en tiempo ...   |
++-----+-------+------+--------------------------------+------------------------------------------+
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 1, Columna 10 | [División por Cero]
+      Descripción: Error: División por cero en tiempo de compilación detectada con operador '/'.
+      Sugerencia de corrección: El denominador no puede ser cero.
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #8: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #09: Error Semántico: Operación Lógica con Operando de Texto [CASO INVALIDO CON ERRORES]
+Categoria: Error de Operando Lógico Inválido
+Comportamiento Esperado: Emite guardia de verificación booleana y reporta que '&&' no admite cadenas de texto.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | flag = (x > y) && "invalido";
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+INSTRUCCIONES DE GUARDA / VALIDACION EMITIDAS:
+if type(a) != boolean or type(b) != boolean then error "Type mismatch" # Valida operandos booleanos
+
+TABLA DE ERRORES / VALIDACIONES ACTIVADAS:
++-----+-------+------+--------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | CATEGORÍA DE ERROR             | DESCRIPCIÓN Y ACCIÓN                     |
++-----+-------+------+--------------------------------+------------------------------------------+
+| 1   | 1     | 9    | Operando Lógico Inválido       | El operador lógico '&&' requiere op...   |
++-----+-------+------+--------------------------------+------------------------------------------+
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 1, Columna 9 | [Operando Lógico Inválido]
+      Descripción: El operador lógico '&&' requiere operandos de tipo booleano.
+      Sugerencia de corrección: No mezcle cadenas con expresiones booleanas.
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #9: [APROBADO]
+
+--------------------------------------------------------------------------------
+TEST #10: Error de Tipo: Asignación Incompatible de Cadena a Variable Entera [CASO INVALIDO CON ERRORES]
+Categoria: Error de Asignación Incompatible
+Comportamiento Esperado: Detecta incompatibilidad de tipos entre 'int' y 'string', emitiendo diagnóstico de error semántico.
+--------------------------------------------------------------------------------
+CODIGO FUENTE EN C:
+   1 | int contador = 10;
+   2 | contador = "texto";
+--------------------------------------------------------------------------------
+>>> RESULTADO DEL ANALISIS: EXITOSO (Deteccion correcta de 1 error(es) semantico(s))
+
+INSTRUCCIONES DE GUARDA / VALIDACION EMITIDAS:
+t1 = 10              # t1 es una etiqueta temporal que representa la constante 10
+contador = t1        # Asigna el valor de t1 a contador
+if type(contador) != integer or type("texto") != integer then error "Type mismatch" # Valida tipos
+
+TABLA DE ERRORES / VALIDACIONES ACTIVADAS:
++-----+-------+------+--------------------------------+------------------------------------------+
+| #   | LÍNEA | COL  | CATEGORÍA DE ERROR             | DESCRIPCIÓN Y ACCIÓN                     |
++-----+-------+------+--------------------------------+------------------------------------------+
+| 1   | 2     | 1    | Discrepancia de Tipos          | No se puede asignar una constante d...   |
++-----+-------+------+--------------------------------+------------------------------------------+
+
+DIAGNOSTICOS CON SUGERENCIAS DE CORRECCION:
+  --> Línea 2, Columna 1 | [Discrepancia de Tipos]
+      Descripción: No se puede asignar una constante de tipo 'string' a la variable entera 'contador'.
+      Sugerencia de corrección: Asegúrese de que el tipo de la constante coincida con el tipo de la variable.
+--------------------------------------------------------------------------------
+ESTADO DE PRUEBA #10: [APROBADO]
+
+================================================================================
+ RESUMEN GENERAL DE EJECUCION DE PRUEBAS
+================================================================================
+ Total de Casos Evaluados: 10
+ Casos Aprobados         : 10
+ Casos Fallados          : 0
+ Tasa de Exito           : 100.0%
+================================================================================
+================================================================================
+ CENTRO UNIVERSITARIO DE CIENCIAS EXACTAS E INGENIERIAS
+ DIVISION DE ELECTRONICA Y COMPUTACION
+ DEPARTAMENTO DE CIENCIAS COMPUTACIONALES
+ MATERIA: TRADUCTORES DE LENGUAJE / COMPILADORES
+ PROFESOR: RIGOBERTO CARDENAS LARIOS
+ ACTIVIDAD 10: GENERACION DE CODIGO INTERMEDIO (TRES DIRECCIONES - TAC)
+ INTEGRANTES DEL EQUIPO (ORDEN ALFABETICO POR PRIMER APELLIDO):
+   1. DIAZ TORRES JAZMIN MONTSERRAT
+   2. FIERRO MELENDEZ ERNESTO HATUEY
+   3. HERNANDEZ GARCIA HECTOR GABRIEL
+   4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
