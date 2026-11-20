@@ -1,0 +1,244 @@
+================================================================================
+COMPILADOR C - TRADUCTORES DE LENGUAJE (CUCEI - UDG)
+ACTIVIDAD 12: OPTIMIZACIÓN DE CÓDIGO INTERMEDIO
+PROFESOR: RIGOBERTO CARDENAS LARIOS
+--------------------------------------------------------------------------------
+INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+1. DIAZ TORRES JAZMIN MONTSERRAT
+2. FIERRO MELÉNDEZ ERNESTO HATUEY
+3. HERNANDEZ GARCIA HECTOR GABRIEL
+4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
+
+================================================================================
+CASO DE PRUEBA #1: [VÁLIDO (OPTIMIZACIÓN EXITOSA)] Análisis de Instrucciones Inalcanzables (Ejemplo Rúbrica)
+Categoría: Identificación de Código Muerto
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    L1:
+    x = 10
+    goto L2
+    y = 20
+    L2:
+    z = x + y
+    result = z
+
+COMPORTAMIENTO ESPERADO:
+    Elimina la instrucción 'y = 20' porque aparece inmediatamente tras 'goto L2' y antes de la etiqueta 'L2:'.
+--------------------------------------------------------------------------------
+BITÁCORA DE OPTIMIZACIONES APLICADAS:
+    • [Eliminación de Código Inalcanzable] Instrucción inalcanzable descartada tras salto incondicional. -> Eliminado/Transformado: 'y = 20'
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO OPTIMIZADO (TAC FINAL):
+    L1:             
+    x = 10
+    goto L2
+    L2:             
+    z = x + y
+    result = z
+--------------------------------------------------------------------------------
+MÉTRICAS: Instrucciones antes: 7 | Instrucciones después: 6 | Reducción: 14.3%
+ESTADO: [PASSED - Optimización coherente y conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #2: [VÁLIDO (OPTIMIZACIÓN EXITOSA)] Análisis de Variables No Utilizadas (Ejemplo Rúbrica)
+Categoría: Identificación de Código Muerto
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    a = 5
+    b = 10
+    c = b + 2
+    result = c
+
+COMPORTAMIENTO ESPERADO:
+    Elimina la asignación 'a = 5' dado que la variable 'a' nunca se lee en ningún cálculo posterior.
+--------------------------------------------------------------------------------
+BITÁCORA DE OPTIMIZACIONES APLICADAS:
+    • [Plegado de Constantes (Constant Folding)] Evaluación en compilación: 10 + 2 = 12. -> Eliminado/Transformado: 'c = b + 2'
+    • [Eliminación de Variable No Utilizada (DCE)] La variable 'a' se inicializa o calcula pero nunca se utiliza. -> Eliminado/Transformado: 'a = 5'
+    • [Eliminación de Variable No Utilizada (DCE)] La variable 'b' se inicializa o calcula pero nunca se utiliza. -> Eliminado/Transformado: 'b = 10'
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO OPTIMIZADO (TAC FINAL):
+    c = 12                       # Plegado: 10+2
+    result = c
+--------------------------------------------------------------------------------
+MÉTRICAS: Instrucciones antes: 4 | Instrucciones después: 2 | Reducción: 50.0%
+ESTADO: [PASSED - Optimización coherente y conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #3: [VÁLIDO (OPTIMIZACIÓN EXITOSA)] Eliminación de Cálculos Repetidos / CSE (Ejemplo Rúbrica)
+Categoría: Eliminación de Instrucciones Redundantes
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    t1 = a + b
+    t2 = a + b
+    result = t1
+
+COMPORTAMIENTO ESPERADO:
+    Detecta que 'a + b' ya se encuentra computado en 't1' y elimina la instrucción redundante 't2 = a + b'.
+--------------------------------------------------------------------------------
+BITÁCORA DE OPTIMIZACIONES APLICADAS:
+    • [Eliminación de Cálculos Repetidos (CSE)] Expresión 'a + b' ya calculada en 't1'. Reemplazando 't2' por 't1'. -> Eliminado/Transformado: 't2 = a + b'
+    • [Eliminación de Variable No Utilizada (DCE)] La variable 't2' se inicializa o calcula pero nunca se utiliza. -> Eliminado/Transformado: 't2 = t1                      # Reemplazo CSE con t1'
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO OPTIMIZADO (TAC FINAL):
+    t1 = a + b
+    result = t1
+--------------------------------------------------------------------------------
+MÉTRICAS: Instrucciones antes: 3 | Instrucciones después: 2 | Reducción: 33.3%
+ESTADO: [PASSED - Optimización coherente y conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #4: [VÁLIDO (OPTIMIZACIÓN EXITOSA)] Eliminación de Asignaciones Innecesarias / Sobrescritas (Ejemplo Rúbrica)
+Categoría: Eliminación de Instrucciones Redundantes
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    temp = a
+    temp = b
+    result = temp
+
+COMPORTAMIENTO ESPERADO:
+    Elimina 'temp = a' al ser sobrescrita inmediatamente por 'temp = b' y propaga la copia a 'result = b'.
+--------------------------------------------------------------------------------
+BITÁCORA DE OPTIMIZACIONES APLICADAS:
+    • [Eliminación de Asignación Redundante] Variable 'temp' sobrescrita inmediatamente sin lectura previa. -> Eliminado/Transformado: 'temp = a'
+    • [Eliminación de Variable No Utilizada (DCE)] La variable 'temp' se inicializa o calcula pero nunca se utiliza. -> Eliminado/Transformado: 'temp = b'
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO OPTIMIZADO (TAC FINAL):
+    result = b
+--------------------------------------------------------------------------------
+MÉTRICAS: Instrucciones antes: 3 | Instrucciones después: 1 | Reducción: 66.7%
+ESTADO: [PASSED - Optimización coherente y conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #5: [VÁLIDO (OPTIMIZACIÓN EXITOSA)] Plegado y Propagación de Constantes (Ejemplo Rúbrica)
+Categoría: Pruebas y Validación de Optimización
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    x = 10
+    t1 = x + 5
+    t2 = t1 + 10
+    result = t2
+
+COMPORTAMIENTO ESPERADO:
+    Propaga la constante x=10 y pliega aritméticamente 10+5=15 y 15+10=25, produciendo 'result = 25'.
+--------------------------------------------------------------------------------
+BITÁCORA DE OPTIMIZACIONES APLICADAS:
+    • [Plegado de Constantes (Constant Folding)] Evaluación en compilación: 10 + 5 = 15. -> Eliminado/Transformado: 't1 = x + 5'
+    • [Plegado de Constantes (Constant Folding)] Evaluación en compilación: 15 + 10 = 25. -> Eliminado/Transformado: 't2 = t1 + 10'
+    • [Eliminación de Variable No Utilizada (DCE)] La variable 'x' se inicializa o calcula pero nunca se utiliza. -> Eliminado/Transformado: 'x = 10'
+    • [Eliminación de Variable No Utilizada (DCE)] La variable 't1' se inicializa o calcula pero nunca se utiliza. -> Eliminado/Transformado: 't1 = 15                      # Plegado: 10+5'
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO OPTIMIZADO (TAC FINAL):
+    t2 = 25                      # Plegado: 15+10
+    result = t2
+--------------------------------------------------------------------------------
+MÉTRICAS: Instrucciones antes: 4 | Instrucciones después: 2 | Reducción: 50.0%
+ESTADO: [PASSED - Optimización coherente y conforme a la rúbrica]
+
+================================================================================
+CASO DE PRUEBA #6: [INVÁLIDO (CONTROL DE ERRORES)] Salto hacia Etiqueta Inexistente en Código Intermedio
+Categoría: Control Semántico de Flujo
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    x = 10
+    goto L_no_existe
+    result = x
+
+COMPORTAMIENTO ESPERADO:
+    Detecta y reporta error semántico: salto incondicional a la etiqueta no definida 'L_no_existe'.
+--------------------------------------------------------------------------------
+ERRORES SINTÁCTICOS / SEMÁNTICOS DETECTADOS CORRECTAMENTE:
+    • [Error Semántico de Control de Flujo] Línea 2: Salto hacia etiqueta inexistente 'L_no_existe'.
+    -> Sugerencia: Defina la etiqueta 'L_no_existe:' o corrija el destino del salto.
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error en código intermedio interceptado adecuadamente]
+
+================================================================================
+CASO DE PRUEBA #7: [INVÁLIDO (CONTROL DE ERRORES)] Uso de Variable No Inicializada en Expresión
+Categoría: Control Semántico de Variables
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    result = variable_desconocida_xyz + 5
+
+COMPORTAMIENTO ESPERADO:
+    Detecta y reporta error semántico: intento de operar con 'variable_desconocida_xyz' que nunca fue inicializada.
+--------------------------------------------------------------------------------
+ERRORES SINTÁCTICOS / SEMÁNTICOS DETECTADOS CORRECTAMENTE:
+    • [Error Semántico de Variable] Línea 1: La variable 'variable_desconocida_xyz' se utiliza en un cálculo pero nunca fue inicializada.
+    -> Sugerencia: Asigne un valor a 'variable_desconocida_xyz' antes de utilizarla.
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error en código intermedio interceptado adecuadamente]
+
+================================================================================
+CASO DE PRUEBA #8: [INVÁLIDO (CONTROL DE ERRORES)] Instrucción TAC Mal Formada o Sintaxis Desconocida
+Categoría: Control Sintáctico de Código Intermedio
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    = = + 5 10
+
+COMPORTAMIENTO ESPERADO:
+    Detecta y reporta error de formato sintáctico en instrucción de código intermedio.
+--------------------------------------------------------------------------------
+ERRORES SINTÁCTICOS / SEMÁNTICOS DETECTADOS CORRECTAMENTE:
+    • [Error Sintáctico de Código Intermedio] Línea 1: Instrucción TAC mal formada o desconocida: '= = + 5 10'.
+    -> Sugerencia: Verifique el formato: 'var = op1 op op2', 'goto Label', 'Label:'.
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error en código intermedio interceptado adecuadamente]
+
+================================================================================
+CASO DE PRUEBA #9: [INVÁLIDO (CONTROL DE ERRORES)] División por Cero Detectada en Optimización de Constantes
+Categoría: Control Aritmético en Compilación
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    x = 100
+    t1 = x / 0
+    result = t1
+
+COMPORTAMIENTO ESPERADO:
+    Detecta y reporta error aritmético: división entre cero en tiempo de compilación durante el plegado de constantes.
+--------------------------------------------------------------------------------
+ERRORES SINTÁCTICOS / SEMÁNTICOS DETECTADOS CORRECTAMENTE:
+    • [Error Aritmético en Optimización] Línea 1: División por cero detectada durante el plegado de constantes: 'x / 0'.
+    -> Sugerencia: Verifique que el divisor no sea cero para evitar excepciones en ejecución.
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error en código intermedio interceptado adecuadamente]
+
+================================================================================
+CASO DE PRUEBA #10: [INVÁLIDO (CONTROL DE ERRORES)] Salto Condicional con Operador Relacional Inválido
+Categoría: Control Sintáctico de Saltos Condicionales
+--------------------------------------------------------------------------------
+CÓDIGO INTERMEDIO ORIGINAL (TAC):
+    if a <> 10 goto L1
+    result = 10
+    L1:
+    result = 20
+
+COMPORTAMIENTO ESPERADO:
+    Detecta operador relacional inválido '<>' en la condición del salto condicional.
+--------------------------------------------------------------------------------
+ERRORES SINTÁCTICOS / SEMÁNTICOS DETECTADOS CORRECTAMENTE:
+    • [Error Sintáctico de Salto Condicional] Línea 1: Condición de salto o sintaxis relacional inválida en: 'if a <> 10 goto L1'.
+    -> Sugerencia: Utilice operadores relacionales válidos: '==', '!=', '<', '>', '<=', '>='.
+--------------------------------------------------------------------------------
+ESTADO: [PASSED - Error en código intermedio interceptado adecuadamente]
+
+================================================================================
+RESUMEN DE RESULTADOS DE LA SUITE DE OPTIMIZACIÓN
+================================================================================
+Total de casos ejecutados: 10
+Casos exitosos:           10 / 10 (100.0%)
+Casos fallidos:           0
+>> VERIFICACIÓN COMPLETA: TODOS LOS CASOS DE PRUEBA PASARON SATISFACTORIAMENTE <<
+================================================================================
+================================================================================
+COMPILADOR C - TRADUCTORES DE LENGUAJE (CUCEI - UDG)
+ACTIVIDAD 12: OPTIMIZACIÓN DE CÓDIGO INTERMEDIO
+PROFESOR: RIGOBERTO CARDENAS LARIOS
+--------------------------------------------------------------------------------
+INTEGRANTES DEL EQUIPO (ORDEN ALFABÉTICO POR PRIMER APELLIDO):
+1. DIAZ TORRES JAZMIN MONTSERRAT
+2. FIERRO MELÉNDEZ ERNESTO HATUEY
+3. HERNANDEZ GARCIA HECTOR GABRIEL
+4. MILLAN GUERRERO OSWALDO JOSUE
+================================================================================
